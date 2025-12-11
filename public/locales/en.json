@@ -1,3 +1,6 @@
 {
-    "Test": "This is a test string."
+    "Test": {
+        "Title": "This is a test title",
+        "Description": "This is a test description"
+    }
 }

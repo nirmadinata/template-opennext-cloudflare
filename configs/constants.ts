@@ -1,4 +1,5 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import type { Timezone } from "next-intl";
 
 export const DEFAULT_ROOT_METADATA: Metadata = {
     title: "Template App",
@@ -8,3 +9,17 @@ export const DEFAULT_ROOT_METADATA: Metadata = {
 export const COOKIE_NAMES = {
     LOCALE: "locale",
 } as const;
+
+export const LOCALES = {
+    EN: "en",
+    AR: "ar",
+} as const;
+
+export type Locale = (typeof LOCALES)[keyof typeof LOCALES];
+
+export const SUPPORTED_LOCALES = [LOCALES.EN, LOCALES.AR] as const;
+export const DEFAULT_LOCALE = LOCALES.EN as Locale;
+export const LOCALE_TIMEZONE = {
+    [LOCALES.EN]: "Asia/Jakarta",
+    [LOCALES.AR]: "Asia/Riyadh",
+} satisfies Record<Locale, Timezone>;

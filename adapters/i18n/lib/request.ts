@@ -3,12 +3,12 @@ import { cookies } from "next/headers";
 import { Formats } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
+import { isLocale } from "@/adapters/i18n/lib/util";
 import {
     DEFAULT_LOCALE,
     LOCALE_TIMEZONE,
     SUPPORTED_LOCALES,
-} from "@/adapters/i18n/constants";
-import { isLocale } from "@/adapters/i18n/lib/util";
+} from "@/configs/constants";
 import { COOKIE_NAMES } from "@/configs/constants";
 
 export const formats = {
@@ -34,7 +34,7 @@ export const formats = {
 
 export default getRequestConfig(async () => {
     const store = await cookies();
-    const locale = store.get(COOKIE_NAMES.LOCALE)?.value;
+    const locale = store.get(COOKIE_NAMES.LOCALE)?.value || DEFAULT_LOCALE;
 
     /**
      * if no locale is set in cookies or
