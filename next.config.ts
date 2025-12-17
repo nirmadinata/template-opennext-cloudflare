@@ -5,10 +5,21 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-    /* config options here */
+    /**
+     * make sure meta tags is not placed inside body tag
+     */
+    htmlLimitedBots: /.*/,
     images: {
         formats: ["image/webp"],
-        remotePatterns: [],
+        remotePatterns: [
+            {
+                /**
+                 * Use hostname from environment variable NEXT_PUBLIC_ASSET_URL
+                 */
+                hostname: new URL(process.env.NEXT_PUBLIC_ASSET_URL || "")
+                    .hostname,
+            },
+        ],
     },
 };
 
@@ -25,6 +36,9 @@ const withBundleAnalyzer = nextBundleAnalyzer({
 
 export default withBundleAnalyzer(withNextIntl(nextConfig));
 
+/**
+ * Initialize OpenNext Cloudflare for development environment.
+ */
 initOpenNextCloudflareForDev({
     environment: process.env.NEXTJS_ENV,
 });

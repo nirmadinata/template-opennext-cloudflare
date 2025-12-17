@@ -1,7 +1,7 @@
 import { cn as _cn } from "@sglara/cn";
 
-export function cn(
-    ...classes: (string | Record<string, boolean> | undefined)[]
-) {
+type ClassValue = Parameters<typeof _cn>[number];
+
+export function cn(...classes: ClassValue[]) {
     return _cn(...classes);
 }
