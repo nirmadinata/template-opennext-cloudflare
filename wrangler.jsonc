@@ -22,6 +22,8 @@
                 {
                     "binding": "MAIN_DB",
                     "migrations_dir": "./adapters/d1/migrations",
+
+                    // Replace with your D1 database ID
                 },
             ],
             "r2_buckets": [

@@ -30,12 +30,9 @@ const nextConfig: NextConfig = {
     },
 };
 
-const withNextIntl = createNextIntlPlugin(
-    // Specify a custom path here
-    {
-        requestConfig: "./adapters/i18n/lib/request.ts",
-    }
-);
+const withNextIntl = createNextIntlPlugin({
+    requestConfig: "./integrations/i18n/lib/request.ts",
+});
 
 const withBundleAnalyzer = nextBundleAnalyzer({
     enabled: process.env.ANALYZE === "1",

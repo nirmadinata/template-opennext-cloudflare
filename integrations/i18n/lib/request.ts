@@ -3,13 +3,13 @@ import { cookies } from "next/headers";
 import { Formats } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
-import { isLocale } from "@/adapters/i18n/lib/util";
 import {
     DEFAULT_LOCALE,
     LOCALE_TIMEZONE,
     SUPPORTED_LOCALES,
 } from "@/configs/constants";
 import { COOKIE_NAMES } from "@/configs/constants";
+import { isLocale } from "@/integrations/i18n/lib/util";
 
 export const formats = {
     dateTime: {

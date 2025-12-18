@@ -1,5 +1,5 @@
-import { formats } from "@/adapters/i18n/lib/request";
 import { Locale } from "@/configs/constants";
+import { formats } from "@/integrations/i18n/lib/request";
 import messages from "@/public/locales/en.json";
 
 declare module "next-intl" {
