@@ -16,19 +16,27 @@
             "kv_namespaces": [
                 {
                     "binding": "MAIN_KV",
+                    "remote": false,
                 },
             ],
             "d1_databases": [
                 {
                     "binding": "MAIN_DB",
-                    "migrations_dir": "./adapters/d1/migrations",
+                    "remote": false,
+                    "migrations_dir": "./integrations/d1/migrations",
 
-                    // Replace with your D1 database ID
+                    // change these to your development database name and id
+                    "database_name": "template-dev",
+                    "database_id": "template-dev",
                 },
             ],
             "r2_buckets": [
                 {
                     "binding": "MAIN_BUCKET",
+                    "remote": true,
+
+                    // change this to your development bucket name
+                    "bucket_name": "template-dev",
                 },
             ],
         },
@@ -45,7 +53,7 @@
             "d1_databases": [
                 {
                     "binding": "MAIN_DB",
-                    "migrations_dir": "./adapters/d1/migrations",
+                    "migrations_dir": "./migrations/d1/migrations",
                     "remote": true,
                 },
             ],

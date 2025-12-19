@@ -6,7 +6,6 @@ import {
     sqliteTable,
     text,
 } from "drizzle-orm/sqlite-core";
-import { createInsertSchema } from "drizzle-zod";
 
 import {
     COMMON_COLUMN_ENUM,
@@ -434,5 +433,3 @@ export const localeRelations = relations(locales, ({}) => ({}));
 export const tagRelations = relations(tags, ({}) => ({}));
 
 export const tagsRelations = relations(tags, ({}) => ({}));
-
-export const insertUserSchema = createInsertSchema(users);
