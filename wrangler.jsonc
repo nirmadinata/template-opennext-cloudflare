@@ -16,6 +16,7 @@
             "kv_namespaces": [
                 {
                     "binding": "MAIN_KV",
+                    "id": "template-kv",
                     "remote": false,
                 },
             ],
@@ -26,8 +27,8 @@
                     "migrations_dir": "./integrations/d1/migrations",
 
                     // change these to your development database name and id
-                    "database_name": "template-dev",
-                    "database_id": "template-dev",
+                    "database_name": "template-kv",
+                    "database_id": "template-kv",
                 },
             ],
             "r2_buckets": [

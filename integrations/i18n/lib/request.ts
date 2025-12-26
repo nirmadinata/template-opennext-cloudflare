@@ -1,14 +1,15 @@
+import type { Formats } from "next-intl";
+
 import { cookies } from "next/headers";
 
-import { Formats } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
 import {
+    COOKIE_NAMES,
     DEFAULT_LOCALE,
     LOCALE_TIMEZONE,
     SUPPORTED_LOCALES,
 } from "@/configs/constants";
-import { COOKIE_NAMES } from "@/configs/constants";
 import { isLocale } from "@/integrations/i18n/lib/util";
 
 export const formats = {
