@@ -9,7 +9,6 @@ import {
 
 import {
     ACCOUNT_COLUMN_ENUM,
-    COMMON_AUTHORED_COLUMN_ENUM,
     COMMON_COLUMN_ENUM,
     INDEXES_ENUM,
     LOCALE_COLUMN_ENUM,
@@ -28,12 +27,12 @@ import {
 const CURRENT_TIMESTAMP = sql`CURRENT_TIMESTAMP`;
 
 const COMMON_COLUMNS = {
-    [COMMON_COLUMN_ENUM.CREATED_AT]: int({
+    created_at: int({
         mode: "timestamp",
     })
         .notNull()
         .default(CURRENT_TIMESTAMP),
-    [COMMON_COLUMN_ENUM.UPDATED_AT]: int({
+    updated_at: int({
         mode: "timestamp",
     })
         .notNull()
@@ -42,12 +41,12 @@ const COMMON_COLUMNS = {
 } as const;
 
 const COMMON_AUTHORED_COLUMNS = {
-    [COMMON_AUTHORED_COLUMN_ENUM.CREATED_BY]: text()
+    created_by: text()
         .notNull()
         .references(() => users[COMMON_COLUMN_ENUM.ID], {
             onDelete: "cascade",
         }),
-    [COMMON_AUTHORED_COLUMN_ENUM.UPDATED_BY]: text()
+    updated_by: text()
         .notNull()
         .references(() => users[COMMON_COLUMN_ENUM.ID], {
             onDelete: "cascade",
@@ -87,27 +86,19 @@ export const users = sqliteTable(
         [USER_COLUMN_ENUM.IMAGE]: text(),
 
         /**
-         * user role
+         * related to admin plugins
          */
+
         [USER_COLUMN_ENUM.ROLE]: text({
-            enum: [...USER_ROLE_LIST],
+            enum: USER_ROLE_LIST,
         }).default(USER_ROLE_DEFAULT),
 
-        /**
-         * is user banned
-         */
         [USER_COLUMN_ENUM.BANNED]: int({
             mode: "boolean",
         }).default(false),
 
-        /**
-         * reason for banning the user
-         */
         [USER_COLUMN_ENUM.BAN_REASON]: text(),
 
-        /**
-         * when the ban expires
-         */
         [USER_COLUMN_ENUM.BAN_EXPIRES]: int({
             mode: "timestamp",
         }),
