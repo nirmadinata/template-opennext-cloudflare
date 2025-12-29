@@ -173,6 +173,7 @@ export const sessions = sqliteTable(
         index(INDEXES_ENUM.SESSION_TOKEN).on(table[SESSION_COLUMN_ENUM.TOKEN]),
     ]
 );
+
 export const accounts = sqliteTable(
     TABLE_ENUM.ACCOUNTS,
     {

@@ -1,6 +1,5 @@
-import { getCFContextSync } from "@/integrations/cloudflare-context";
+import "server-only";
 
-export function getInternalKV() {
-    const { env } = getCFContextSync();
+export function getInternalKV(env: CloudflareEnv) {
     return env.INTERNAL_KV;
 }
