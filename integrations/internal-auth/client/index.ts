@@ -1,10 +1,11 @@
 import "client-only";
 
+import type { AuthType } from "../server";
+
 import { createAuthClient } from "better-auth/client";
 import { adminClient, inferAdditionalFields } from "better-auth/client/plugins";
 
-import { APP_PATH } from "@/integrations/internal-auth/constants";
-import { AuthType } from "@/integrations/internal-auth/server";
+import { APP_PATH } from "../constants";
 
 export const authClient = createAuthClient({
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,

@@ -1,5 +1,5 @@
-import { serverRpc } from "@/integrations/rpc/server";
 import { HomePageTemplate } from "@/features/visitor-home/components";
+import { serverRpc } from "@/integrations/rpc/server";
 
 /**
  * Home Page

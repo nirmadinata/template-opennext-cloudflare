@@ -1,6 +1,6 @@
 "use client";
 
-import type { AppRouter } from "./router";
+import type { AppRouter } from "../router";
 import type { RouterClient } from "@orpc/server";
 
 import { createORPCClient, onError } from "@orpc/client";
@@ -35,7 +35,7 @@ const link = new RPCLink({
  *
  * @example
  * ```ts
- * import { clientRpc } from "@/integrations/rpc";
+ * import { clientRpc } from "@/integrations/rpc/client";
  *
  * const data = await clientRpc.home.getHomePageData();
  * ```
@@ -49,7 +49,7 @@ export const clientRpc: RouterClient<AppRouter> = createORPCClient(link);
  *
  * @example
  * ```tsx
- * import { orpc } from "@/integrations/rpc";
+ * import { orpc } from "@/integrations/rpc/client";
  * import { useQuery } from "@tanstack/react-query";
  *
  * const { data } = useQuery(orpc.home.getHomePageData.queryOptions());

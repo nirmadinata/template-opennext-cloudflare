@@ -2,7 +2,7 @@ import "server-only";
 
 import { createRouterClient } from "@orpc/server";
 
-import { appRouter } from "./router";
+import { appRouter } from "../router";
 
 /**
  * Server-side RPC client
@@ -12,7 +12,7 @@ import { appRouter } from "./router";
  *
  * @example
  * ```ts
- * import { serverRpc } from "@/integrations/rpc";
+ * import { serverRpc } from "@/integrations/rpc/server";
  *
  * const data = await serverRpc.home.getHomePageData();
  * ```

@@ -22,7 +22,7 @@ Always access Cloudflare bindings through the context wrapper:
 import {
     getCFContext,
     getCFContextSync,
-} from "@/integrations/cloudflare-context";
+} from "@/integrations/cloudflare-context/server";
 
 // In async contexts (server actions, route handlers)
 const { env } = await getCFContext();
@@ -36,9 +36,9 @@ const { env } = getCFContextSync();
 Database instances are **singletons** initialized per request:
 
 ```typescript
-import { getInternalDB } from "@/integrations/internal-db";
+import { getInternalDB } from "@/integrations/internal-db/server";
 
-const db = getInternalDB(env.INTERNAL_DB); // env from getCFContext()
+const db = getInternalDB(env); // env from getCFContext()
 ```
 
 - Schema uses `snake_case` casing automatically via Drizzle config
@@ -70,7 +70,7 @@ const { data } = useQuery(orpc.home.getHomePageData.queryOptions());
 
 Auth routes are handled via [app/api/auth/[...all]/route.ts](app/api/auth/[...all]/route.ts):
 
-- **better-auth** configured in [integrations/internal-auth/server.ts](integrations/internal-auth/server.ts)
+- **better-auth** configured in [integrations/internal-auth/server/index.ts](integrations/internal-auth/server/index.ts)
 - Uses D1 for user/session storage, KV for secondary storage (rate limiting, verification)
 - Admin plugin enabled with role-based access (see `USER_ROLE_LIST` in schema)
 - OAuth: Google configured (enable others in `socialProviders`)
@@ -80,7 +80,7 @@ Auth routes are handled via [app/api/auth/[...all]/route.ts](app/api/auth/[...al
 Locale is cookie-based, not URL-based:
 
 ```typescript
-import { getUserLocale, setUserLocale } from "@/integrations/i18n";
+import { getUserLocale, setUserLocale } from "@/integrations/i18n/server";
 
 const locale = await getUserLocale(); // Returns "en" | "ar"
 ```

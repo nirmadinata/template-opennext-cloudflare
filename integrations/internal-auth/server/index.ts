@@ -9,8 +9,7 @@ import {
     APP_PATH,
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
-} from "@/integrations/internal-auth/constants";
-import { getInternalDB } from "@/integrations/internal-db";
+} from "../constants";
 import {
     ACCOUNT_COLUMN_ENUM,
     COMMON_COLUMN_ENUM,
@@ -19,7 +18,8 @@ import {
     USER_COLUMN_ENUM,
     VERIFICATION_COLUMN_ENUM,
 } from "@/integrations/internal-db/constants";
-import { getInternalKV } from "@/integrations/internal-kv";
+import { getInternalDB } from "@/integrations/internal-db/server";
+import { getInternalKV } from "@/integrations/internal-kv/server";
 
 function createAuth(env: CloudflareEnv) {
     const db = getInternalDB(env);
@@ -155,9 +155,7 @@ export type AuthType = Awaited<ReturnType<typeof createAuth>>;
 let auth: AuthType | null = null;
 
 export function getAuth(env: CloudflareEnv) {
-    if (!auth) {
-        auth = createAuth(env);
-    }
+    auth ??= createAuth(env);
 
     return auth;
 }
