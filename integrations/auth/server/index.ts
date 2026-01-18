@@ -25,7 +25,6 @@ let adapter: ReturnType<typeof createAdapter> | null = null;
 
 function getAdapter<D extends DB>(db: D) {
     adapter ??= createAdapter(db);
-
     return adapter;
 }
 
@@ -45,6 +44,8 @@ function createAuth(env: CloudflareEnv) {
         basePath: APP_PATH,
         socialProviders: {
             google: {
+                prompt: "select_account",
+                disableSignUp: true,
                 enabled: true,
                 clientId: process.env.GOOGLE_CLIENT_ID!,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -120,7 +121,7 @@ function createAuth(env: CloudflareEnv) {
             /**
              * OpenAPI Plugin (development only)
              */
-            ...(process.env.NEXTJS_ENV !== "production" ? [openAPI()] : []),
+            ...(process.env.NEXTJS_ENV === "production" ? [] : [openAPI()]),
 
             /**
              * Admin Plugin
