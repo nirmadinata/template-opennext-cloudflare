@@ -45,3 +45,4 @@ cloudflare-env.d.ts
 .wrangler
 # Localflare generated files
 .localflare/
+.open-next/
