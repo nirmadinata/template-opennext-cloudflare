@@ -12,13 +12,13 @@ if (process.env.NODE_ENV === "production") {
 config({ path });
 
 export default defineConfig({
-    out: "./integrations/internal-db/migrations",
-    schema: "./integrations/internal-db/schema.ts",
+    out: "./integrations/db/migrations",
+    schema: "./integrations/db/schema.ts",
     dialect: "sqlite",
     driver: "d1-http",
     dbCredentials: {
-        accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
-        databaseId: process.env.CLOUDFLARE_DATABASE_ID!,
-        token: process.env.CLOUDFLARE_API_TOKEN!,
+        accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
+        databaseId: process.env.CLOUDFLARE_DATABASE_ID,
+        token: process.env.CLOUDFLARE_API_TOKEN,
     },
 });

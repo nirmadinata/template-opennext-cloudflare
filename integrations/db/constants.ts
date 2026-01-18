@@ -1,7 +1,10 @@
 /**
  * table names
  */
-export const TABLE_ENUM = {
+export const TABLE_ALIASES = {
+    /**
+     * master tables
+     */
     USERS: "users",
     SESSIONS: "sessions",
     ACCOUNTS: "accounts",
@@ -12,7 +15,7 @@ export const TABLE_ENUM = {
      */
     LOCALES: "locales",
     TAGS: "tags",
-    STATIC_PAGE_METADATAS: "static_page_metadatas",
+    STATIC_PAGE_DATA: "static_page_data",
 
     /**
      * media related
@@ -20,6 +23,55 @@ export const TABLE_ENUM = {
     MIME_TYPES: "mime_types",
     MEDIAS: "media",
     MEDIA_TAGS: "media_tags",
+} as const;
+
+export const COLUMN_ALIASES = {
+    /**
+     * common columns
+     */
+    COMMON_COLUMNS: {
+        ID: "id",
+        CREATED_AT: "created_at",
+        UPDATED_AT: "updated_at",
+        CREATED_BY: "created_by",
+        UPDATED_BY: "updated_by",
+    },
+
+    USERS: {
+        NAME: "name",
+        EMAIL: "email",
+        EMAIL_VERIFIED: "email_verified",
+        IMAGE: "image",
+        ROLE: "role",
+        BANNED: "banned",
+        BAN_REASON: "ban_reason",
+        BAN_EXPIRES: "ban_expires",
+    },
+    ACCOUNTS: {
+        USER_ID: "user_id",
+        ACCOUNT_ID: "account_id",
+        PROVIDER_ID: "provider_id",
+        ACCESS_TOKEN: "access_token",
+        REFRESH_TOKEN: "refresh_token",
+        ACCESS_TOKEN_EXPIRES_AT: "access_token_expires_at",
+        REFRESH_TOKEN_EXPIRES_AT: "refresh_token_expires_at",
+        SCOPE: "scope",
+        ID_TOKEN: "id_token",
+        PASSWORD: "password",
+    },
+    SESSIONS: {
+        USER_ID: "user_id",
+        TOKEN: "token",
+        EXPIRES_AT: "expires_at",
+        IP_ADDRESS: "ip_address",
+        USER_AGENT: "user_agent",
+        IMPERSONATED_BY: "impersonated_by",
+    },
+    VERIFICATIONS: {
+        IDENTIFIER: "identifier",
+        VALUE: "value",
+        EXPIRES_AT: "expires_at",
+    },
 } as const;
 
 export const INDEXES_ENUM = {
@@ -34,63 +86,6 @@ export const INDEXES_ENUM = {
     LOCALES_NAME: "idx_locales_name",
     MEDIA_NAME: "idx_media_name",
     MIME_TYPES_MIME_TYPE: "idx_mime_types_mime_type",
-} as const;
-
-/**
- * common column names
- */
-export const COMMON_COLUMN_ENUM = {
-    ID: "id",
-    CREATED_AT: "created_at",
-    UPDATED_AT: "updated_at",
-} as const;
-
-export const COMMON_AUTHORED_COLUMN_ENUM = {
-    CREATED_BY: "created_by",
-    UPDATED_BY: "updated_by",
-} as const;
-
-/**
- * actual column names for each table
- */
-
-export const USER_COLUMN_ENUM = {
-    NAME: "name",
-    EMAIL: "email",
-    EMAIL_VERIFIED: "email_verified",
-    IMAGE: "image",
-    ROLE: "role",
-    BANNED: "banned",
-    BAN_REASON: "ban_reason",
-    BAN_EXPIRES: "ban_expires",
-} as const;
-
-export const SESSION_COLUMN_ENUM = {
-    USER_ID: "user_id",
-    TOKEN: "token",
-    EXPIRES_AT: "expires_at",
-    IP_ADDRESS: "ip_address",
-    USER_AGENT: "user_agent",
-    IMPERSONATED_BY: "impersonated_by",
-} as const;
-
-export const ACCOUNT_COLUMN_ENUM = {
-    USER_ID: "user_id",
-    ACCOUNT_ID: "account_id",
-    PROVIDER_ID: "provider_id",
-    ACCESS_TOKEN: "access_token",
-    REFRESH_TOKEN: "refresh_token",
-    ACCESS_TOKEN_EXPIRES_AT: "access_token_expires_at",
-    REFRESH_TOKEN_EXPIRES_AT: "refresh_token_expires_at",
-    SCOPE: "scope",
-    ID_TOKEN: "id_token",
-    PASSWORD: "password",
-} as const;
-
-export const VERIFICATION_COLUMN_ENUM = {
-    IDENTIFIER: "identifier",
-    VALUE: "value",
-    EXPIRES_AT: "expires_at",
 } as const;
 
 export const TAGS_COLUMN_ENUM = {

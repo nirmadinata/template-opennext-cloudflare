@@ -24,7 +24,7 @@
                 {
                     "binding": "INTERNAL_DB",
                     "remote": false,
-                    "migrations_dir": "./integrations/internal-db/migrations",
+                    "migrations_dir": "./integrations/db/migrations",
 
                     // change these to your local database name and id
                     "database_name": "template",
@@ -54,7 +54,7 @@
             "d1_databases": [
                 {
                     "binding": "INTERNAL_DB",
-                    "migrations_dir": "./migrations/internal-db/migrations",
+                    "migrations_dir": "./migrations/db/migrations",
                     "remote": true,
                     "database_name": "template",
                 },

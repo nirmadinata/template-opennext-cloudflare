@@ -16,4 +16,4 @@
  */
 
 // Re-export for backward compatibility (will be removed in future)
-export { getInternalDB } from "./server";
+export { getDB as getInternalDB } from "./server";

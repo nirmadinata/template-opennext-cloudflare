@@ -14,4 +14,4 @@
  */
 
 // Re-export for backward compatibility (will be removed in future)
-export { getInternalKV } from "./server";
+export { getKV as getInternalKV } from "./server";
