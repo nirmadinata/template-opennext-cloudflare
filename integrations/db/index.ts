@@ -1,19 +1,19 @@
 /**
- * Internal Database Integration
+ * Database Integration
  *
  * Provides access to Cloudflare D1 database via Drizzle ORM.
- * Server-only: import from "@/integrations/internal-db/server"
- * Shared (schema, constants): import from "@/integrations/internal-db"
+ * Server-only: import from "@/integrations/db/server"
+ * Shared (schema, constants): import from "@/integrations/db"
  *
  * @example
  * ```ts
- * import { getInternalDB } from "@/integrations/internal-db/server";
- * import { users } from "@/integrations/internal-db/schema";
+ * import { getDB } from "@/integrations/db/server";
+ * import { users } from "@/integrations/db/schema";
  *
- * const db = getInternalDB(env);
+ * const db = getDB(env);
  * const allUsers = await db.select().from(users);
  * ```
  */
 
-// Re-export for backward compatibility (will be removed in future)
-export { getDB as getInternalDB } from "./server";
+export * from "./schema";
+export * from "./constants";

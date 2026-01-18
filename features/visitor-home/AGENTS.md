@@ -79,6 +79,6 @@ Compare both approaches at:
 
 ## Extending
 To add real database integration:
-1. Import `getCFContext` and `getInternalDB`
+1. Import `getCFContext` from `@/integrations/cloudflare-context/server` and `getDB` from `@/integrations/db/server`
 2. Replace mock data with D1 queries in procedure handlers
-3. Add database schema in `integrations/internal-db/schema.ts`
+3. Add database schema in `integrations/db/schema.ts`

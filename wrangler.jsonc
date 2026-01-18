@@ -47,14 +47,14 @@
             },
             "kv_namespaces": [
                 {
-                    "binding": "MAIN_KV",
+                    "binding": "INTERNAL_KV",
                     "remote": true,
                 },
             ],
             "d1_databases": [
                 {
                     "binding": "INTERNAL_DB",
-                    "migrations_dir": "./migrations/db/migrations",
+                    "migrations_dir": "./integrations/db/migrations",
                     "remote": true,
                     "database_name": "template",
                 },

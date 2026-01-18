@@ -28,6 +28,7 @@ const eslintConfig = defineConfig([
             "src/adapters/public-api/typegen.ts",
             ".eslintcache",
             "cloudflare-env.d.ts",
+            "**/migrations/**",
         ],
     },
     ...nextVitals,

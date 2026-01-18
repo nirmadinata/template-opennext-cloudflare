@@ -13,5 +13,4 @@
  * ```
  */
 
-// Re-export for backward compatibility (will be removed in future)
 export { getUserLocale, setUserLocale, onChangeLocale } from "./server";

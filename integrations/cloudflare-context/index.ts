@@ -16,5 +16,4 @@
  * ```
  */
 
-// Re-export for backward compatibility (will be removed in future)
 export { getCFContext, getCFContextSync } from "./server";

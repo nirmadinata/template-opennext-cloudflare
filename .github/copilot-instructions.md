@@ -36,9 +36,9 @@ const { env } = getCFContextSync();
 Database instances are **singletons** initialized per request:
 
 ```typescript
-import { getInternalDB } from "@/integrations/internal-db/server";
+import { getDB } from "@/integrations/db/server";
 
-const db = getInternalDB(env); // env from getCFContext()
+const db = getDB(env); // env from getCFContext()
 ```
 
 - Schema uses `snake_case` casing automatically via Drizzle config
@@ -68,11 +68,11 @@ const { data } = useQuery(orpc.home.getHomePageData.queryOptions());
 
 ### Authentication Integration
 
-Auth routes are handled via [app/api/auth/[...all]/route.ts](app/api/auth/[...all]/route.ts):
+Auth routes are handled via `app/api/auth/[...all]/route.ts`:
 
-- **better-auth** configured in [integrations/internal-auth/server/index.ts](integrations/internal-auth/server/index.ts)
+- **better-auth** configured in `integrations/auth/server/index.ts`
 - Uses D1 for user/session storage, KV for secondary storage (rate limiting, verification)
-- Admin plugin enabled with role-based access (see `USER_ROLE_LIST` in schema)
+- Admin plugin enabled with role-based access (see `ROLE_ENUM` in `integrations/auth/constants.ts`)
 - OAuth: Google configured (enable others in `socialProviders`)
 
 ### Internationalization Pattern
@@ -86,12 +86,12 @@ const locale = await getUserLocale(); // Returns "en" | "ar"
 ```
 
 - Default: English (`LOCALES.EN`)
-- Translations in [public/locales/](public/locales/)
-- Configured via [integrations/i18n/lib/request.ts](integrations/i18n/lib/request.ts)
+- Translations in `public/locales/`
+- Configured via `integrations/i18n/lib/request.ts`
 
 ### Client-Side State Management
 
-Global providers in [components/molecules/client-provider.tsx](components/molecules/client-provider.tsx):
+Global providers in `components/molecules/client-provider.tsx`:
 
 - TanStack Query with unified devtools panel
 - Form devtools integrated alongside query devtools
@@ -104,7 +104,7 @@ Global providers in [components/molecules/client-provider.tsx](components/molecu
 Two environments: `local` and `production`
 
 - Set `NEXTJS_ENV=local` or `NEXTJS_ENV=production`
-- Each has distinct bindings in [wrangler.jsonc](wrangler.jsonc)
+- Each has distinct bindings in `wrangler.jsonc`
 - Local uses remote=false for KV/D1, remote=true for R2
 
 ### Key Commands
@@ -112,32 +112,41 @@ Two environments: `local` and `production`
 ```bash
 # Development
 bun run dev                           # Next.js dev with Turbopack
+bun run build                         # Build with Next.js
+
+# Linting & Formatting
+bun run lint                          # ESLint with auto-fix
+bun run format                        # Prettier formatting
 
 # Database migrations
-bun run internal:generate             # Generate migrations from schema
-bun run internal:migrate:local        # Apply to local D1
-bun run internal:migrate:production   # Apply to production D1
-bun run internal:studio:local         # Drizzle Studio UI
+bun run db:generate                   # Generate migrations from schema
+bun run db:migrate:local              # Apply to local D1
+bun run db:migrate:production         # Apply to production D1
+bun run db:studio:local               # Drizzle Studio UI (local)
+bun run db:studio:production          # Drizzle Studio UI (production)
 
 # Cloudflare deployment
 bun run cf:typegen                    # Generate CloudflareEnv types
 bun run cf:build:local                # Build for local/preview
+bun run cf:build:production           # Build for production
+bun run cf:deploy:local               # Deploy to local/preview
 bun run cf:deploy:production          # Deploy to production
 
 # Email templates (React Email)
 bun run email:dev                     # Preview emails
+bun run email:build                   # Build email templates
 ```
 
 ### Database Schema Changes
 
-1. Edit [integrations/internal-db/schema.ts](integrations/internal-db/schema.ts)
-2. Run `bun run internal:generate` to create migration
-3. Apply with `bun run internal:migrate:local` or `:production`
+1. Edit `integrations/db/schema.ts`
+2. Run `bun run db:generate` to create migration
+3. Apply with `bun run db:migrate:local` or `db:migrate:production`
 4. Never edit generated SQL directly
 
 ### Adding UI Components
 
-UI components in [components/ui/](components/ui/) use:
+UI components in `components/ui/` use:
 
 - **Radix UI** primitives
 - **class-variance-authority** for variants
@@ -148,12 +157,12 @@ UI components in [components/ui/](components/ui/) use:
 
 ### Import Paths
 
-- Use `@/*` for all internal imports (configured in [tsconfig.json](tsconfig.json))
+- Use `@/*` for all internal imports (configured in `tsconfig.json`)
 - Server-only code must import `"server-only"` at top
 
 ### Folder Organization
 
-- `integrations/` - External service wrappers (auth, db, kv, i18n, rest)
+- `integrations/` - External service wrappers (auth, db, kv, i18n, rpc, cloudflare-context)
 - `features/` - Feature-specific code with atomic design structure
 - `components/ui/` - Reusable UI primitives
 - `components/molecules/` - Composite client components
@@ -187,7 +196,7 @@ features/<feature>/
 ### Type Safety
 
 - CloudflareEnv types auto-generated via `bun run cf:typegen`
-- Drizzle schema exports types directly: `import { users } from "@/integrations/internal-db/schema"`
+- Drizzle schema exports types directly: `import { users } from "@/integrations/db/schema"`
 - Use Zod schemas from `drizzle-zod` for validation
 
 ## Integration Boundaries
@@ -201,14 +210,14 @@ features/<feature>/
 ### External Dependencies
 
 - **ORPC**: Type-safe RPC APIs in `integrations/rpc/`, feature routers in `features/*/server/`
-- **better-auth**: All auth logic centralized in `integrations/internal-auth/`
+- **better-auth**: All auth logic centralized in `integrations/auth/`
 - **Drizzle**: Database schema is source of truth, migrations auto-generated
 - **next-intl**: Wrapped in `integrations/i18n/` for custom locale logic
 
 ## Common Pitfalls
 
 1. **Don't access `process.env.CLOUDFLARE_*` directly** - use `getCFContext().env`
-2. **Don't create multiple DB instances** - always use `getInternalDB(env)`
+2. **Don't create multiple DB instances** - always use `getDB(env)`
 3. **Migrations require environment variables** - ensure `.env.local` / `.env.production` exist with Cloudflare credentials
 4. **Admin routes require authentication** - check session in layout or middleware
 5. **Locale changes need server action** - client can't set cookies directly
