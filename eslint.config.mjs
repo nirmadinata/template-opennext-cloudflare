@@ -29,6 +29,7 @@ const eslintConfig = defineConfig([
             ".eslintcache",
             "cloudflare-env.d.ts",
             "**/migrations/**",
+            "**/components/ui/**",
         ],
     },
     ...nextVitals,

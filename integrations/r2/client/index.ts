@@ -145,6 +145,11 @@ function uploadWithProgress(
 
         xhr.open("PUT", url);
 
+        xhr.setRequestHeader(
+            "Vary",
+            "Access-Control-Request-Headers, Access-Control-Request-Method, Origin"
+        );
+
         if (contentType) {
             xhr.setRequestHeader("Content-Type", contentType);
         }
