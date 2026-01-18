@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { R2_PATHS, buildR2Key } from "@/integrations/r2";
+import { R2_PATHS } from "@/integrations/r2";
 import {
     uploadToPresignedUrl,
     generateUniqueFilename,
@@ -42,15 +42,14 @@ export interface UploadWithProgressState {
  */
 export interface UseUploadWithProgressOptions {
     /**
-     * R2 path prefix for uploads
+     * R2 path for uploads (e.g., "uploads/photos", "documents/reports")
      * @default R2_PATHS.UPLOADS
      */
-    pathPrefix?: string;
+    path?: string;
     /**
-     * Subfolder within the path prefix
-     * @default "general"
+     * Optional custom filename. If not provided, a unique filename will be generated.
      */
-    subfolder?: string;
+    filename?: string;
     /**
      * Presigned URL expiration in seconds
      * @default 3600 (1 hour)
@@ -70,9 +69,9 @@ export interface UseUploadWithProgressOptions {
     onError?: (error: Error) => void;
     /**
      * Query keys to invalidate on success
-     * @default [["storage"]]
+     * @default ["storage"]
      */
-    invalidateKeys?: string[][];
+    invalidateKeys?: string[];
 }
 
 /**
@@ -101,7 +100,7 @@ const initialProgress: UploadProgress = {
  *
  * @example
  * ```tsx
- * import { useUploadWithProgress } from "@/features/visitor-home/hooks";
+ * import { useUploadWithProgress } from "@/hooks";
  *
  * function MyComponent() {
  *     const {
@@ -113,8 +112,7 @@ const initialProgress: UploadProgress = {
  *         uploadedKey,
  *         error,
  *     } = useUploadWithProgress({
- *         pathPrefix: R2_PATHS.USER_UPLOADS,
- *         subfolder: "documents",
+ *         path: "uploads/documents",
  *         onProgress: (p) => console.log(`${p.percentage}%`),
  *         onSuccess: (key) => console.log(`Uploaded: ${key}`),
  *     });
@@ -137,13 +135,13 @@ export function useUploadWithProgress(
     options: UseUploadWithProgressOptions = {}
 ): UseUploadWithProgressReturn {
     const {
-        pathPrefix = R2_PATHS.UPLOADS,
-        subfolder = "general",
+        path = R2_PATHS.UPLOADS,
+        filename,
         expiresIn = 3600,
         onProgress,
         onSuccess,
         onError,
-        invalidateKeys = [["storage"]],
+        invalidateKeys = ["storage"],
     } = options;
 
     const [progress, setProgress] = useState<UploadProgress>(initialProgress);
@@ -157,8 +155,9 @@ export function useUploadWithProgress(
     const { mutateAsync: generateUploadUrl, isPending: isGeneratingUrl } =
         useMutation({
             mutationFn: async (file: File) => {
-                const uniqueFilename = generateUniqueFilename(file.name);
-                const key = buildR2Key(pathPrefix, subfolder, uniqueFilename);
+                const finalFilename =
+                    filename ?? generateUniqueFilename(file.name);
+                const key = `${path}/${finalFilename}`;
 
                 const result = await orpc.storage.generateUploadUrl.call({
                     key,
@@ -210,8 +209,8 @@ export function useUploadWithProgress(
             onSuccess: (data) => {
                 setUploadedKey(data.key);
                 // Invalidate specified query keys
-                invalidateKeys.forEach((keys) => {
-                    queryClient.invalidateQueries({ queryKey: keys });
+                invalidateKeys.forEach((key) => {
+                    queryClient.invalidateQueries({ queryKey: [key] });
                 });
                 onSuccess?.(data.key);
             },

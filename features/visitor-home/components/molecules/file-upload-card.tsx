@@ -2,14 +2,10 @@
 
 import { useState, useCallback } from "react";
 
-import { useUploadWithProgress } from "../../hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-    R2_PATHS,
-    ALLOWED_MIME_TYPES,
-    MAX_FILE_SIZES,
-} from "@/integrations/r2";
+import { useUploadWithProgress } from "@/hooks";
+import { ALLOWED_MIME_TYPES, MAX_FILE_SIZES } from "@/integrations/r2";
 import {
     validateFileType,
     validateFileSize,
@@ -35,8 +31,7 @@ export function FileUploadCard() {
         uploadedKey,
         error: uploadError,
     } = useUploadWithProgress({
-        pathPrefix: R2_PATHS.UPLOADS,
-        subfolder: "demo",
+        path: "uploads/demo",
         onSuccess: () => {
             setSelectedFile(null);
         },

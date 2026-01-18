@@ -162,12 +162,35 @@ UI components in `components/ui/` use:
 
 ### Folder Organization
 
+- `hooks/` - Global reusable React hooks (useUpload, useUploadWithProgress, useIsMobile)
 - `integrations/` - External service wrappers (auth, db, kv, i18n, rpc, cloudflare-context)
 - `features/` - Feature-specific code with atomic design structure
 - `components/ui/` - Reusable UI primitives
 - `components/molecules/` - Composite client components
 - `components/templates/` - Email templates
 - `app/(admin)/` - Route group for admin pages (shares layout)
+
+### Global Hooks Pattern
+
+Reusable hooks that work across features belong in `hooks/`:
+
+```typescript
+// hooks/use-upload.ts - Reusable file upload hook
+import { useUpload, useUploadWithProgress } from "@/hooks";
+
+// Use in any feature
+const { upload, isUploading, error } = useUpload({
+    path: "uploads/documents",
+    onSuccess: (key) => console.log(`Uploaded: ${key}`),
+});
+
+// With progress tracking
+const { upload, progress, cancel } = useUploadWithProgress({
+    path: "uploads/images",
+    filename: "custom-name.jpg", // Optional custom filename
+    onProgress: (p) => console.log(`${p.percentage}%`),
+});
+```
 
 ### Feature Structure (Atomic Design)
 
@@ -176,7 +199,7 @@ Each feature in `features/` follows this structure:
 ```
 features/<feature>/
 ├── utils/           # Feature-specific utilities
-├── hooks/           # Feature-specific React hooks
+├── hooks/           # Feature-specific hooks (feature-only logic)
 ├── components/
 │   ├── atoms/       # Basic elements (Heading, Text, Icon)
 │   ├── molecules/   # Simple groups (Cards, Items)
@@ -189,31 +212,18 @@ features/<feature>/
 └── AGENTS.md        # Feature-specific AI instructions
 ```
 
-**Feature Hooks Pattern:**
+**Feature-Specific Hooks (vs Global):**
 
-Feature-specific hooks encapsulate reusable stateful logic:
+Feature hooks should only contain logic that is:
+
+- Unique to the feature's business domain
+- Not reusable across other features
+- Tightly coupled to feature-specific data or components
 
 ```typescript
-// features/<feature>/hooks/use-something.ts
-"use client";
-
-import { useState, useCallback } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { orpc } from "@/integrations/rpc/client";
-
-export interface UseSomethingOptions {
-    onSuccess?: (result: SomeType) => void;
-    onError?: (error: Error) => void;
-}
-
-export function useSomething(options: UseSomethingOptions = {}) {
-    const [state, setState] = useState<SomeState>(initialState);
-
-    const doSomething = useCallback(async (input: InputType) => {
-        // Implementation using mutations, orpc calls, etc.
-    }, []);
-
-    return { doSomething, state, ...otherValues };
+// features/checkout/hooks/use-cart-total.ts - Feature-specific
+export function useCartTotal() {
+    // Logic specific to checkout feature
 }
 ```
 

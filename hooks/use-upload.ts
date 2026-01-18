@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { R2_PATHS, buildR2Key } from "@/integrations/r2";
+import { R2_PATHS } from "@/integrations/r2";
 import {
     uploadToPresignedUrl,
     generateUniqueFilename,
@@ -28,15 +28,14 @@ export interface UploadState {
  */
 export interface UseUploadOptions {
     /**
-     * R2 path prefix for uploads
+     * R2 path for uploads (e.g., "uploads/photos", "documents/reports")
      * @default R2_PATHS.UPLOADS
      */
-    pathPrefix?: string;
+    path?: string;
     /**
-     * Subfolder within the path prefix
-     * @default "general"
+     * Optional custom filename. If not provided, a unique filename will be generated.
      */
-    subfolder?: string;
+    filename?: string;
     /**
      * Presigned URL expiration in seconds
      * @default 3600 (1 hour)
@@ -52,9 +51,9 @@ export interface UseUploadOptions {
     onError?: (error: Error) => void;
     /**
      * Query keys to invalidate on success
-     * @default [["storage"]]
+     * @default ["storage"]
      */
-    invalidateKeys?: string[][];
+    invalidateKeys?: string[];
 }
 
 /**
@@ -75,12 +74,11 @@ export interface UseUploadReturn extends UploadState {
  *
  * @example
  * ```tsx
- * import { useUpload } from "@/features/visitor-home/hooks";
+ * import { useUpload } from "@/hooks";
  *
  * function MyComponent() {
  *     const { upload, isUploading, uploadedKey, error, reset } = useUpload({
- *         pathPrefix: R2_PATHS.USER_UPLOADS,
- *         subfolder: "avatars",
+ *         path: "uploads/avatars",
  *         onSuccess: (key) => console.log(`Uploaded: ${key}`),
  *     });
  *
@@ -101,12 +99,12 @@ export interface UseUploadReturn extends UploadState {
  */
 export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
     const {
-        pathPrefix = R2_PATHS.UPLOADS,
-        subfolder = "general",
+        path = R2_PATHS.UPLOADS,
+        filename,
         expiresIn = 3600,
         onSuccess,
         onError,
-        invalidateKeys = [["storage"]],
+        invalidateKeys = ["storage"],
     } = options;
 
     const [uploadedKey, setUploadedKey] = useState<string | null>(null);
@@ -118,8 +116,9 @@ export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
     const { mutateAsync: generateUploadUrl, isPending: isGeneratingUrl } =
         useMutation({
             mutationFn: async (file: File) => {
-                const uniqueFilename = generateUniqueFilename(file.name);
-                const key = buildR2Key(pathPrefix, subfolder, uniqueFilename);
+                const finalFilename =
+                    filename ?? generateUniqueFilename(file.name);
+                const key = `${path}/${finalFilename}`;
 
                 const result = await orpc.storage.generateUploadUrl.call({
                     key,
@@ -159,8 +158,8 @@ export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
             onSuccess: (data) => {
                 setUploadedKey(data.key);
                 // Invalidate specified query keys
-                invalidateKeys.forEach((keys) => {
-                    queryClient.invalidateQueries({ queryKey: keys });
+                invalidateKeys.forEach((key) => {
+                    queryClient.invalidateQueries({ queryKey: [key] });
                 });
                 onSuccess?.(data.key);
             },

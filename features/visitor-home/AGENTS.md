@@ -9,7 +9,7 @@ Public-facing home page for visitors. Displays hero, features, testimonials, sta
 ```
 visitor-home/
 ├── utils/               # Feature-specific utilities
-├── hooks/               # Feature-specific React hooks (useUpload, useUploadWithProgress)
+├── hooks/               # Feature-specific React hooks (feature-only logic)
 ├── components/          # Atomic design components
 │   ├── atoms/           # Basic elements (Heading, Text, Icon)
 │   ├── molecules/       # Simple groups (FeatureCard, StatCard, TestimonialCard, FileUploadCard, TextStorageCard)
@@ -25,22 +25,17 @@ visitor-home/
 
 ## Key Patterns
 
-### Feature-Specific Hooks
+### Using Global Hooks
 
-Hooks encapsulate reusable stateful logic for the feature:
-
-- **`useUpload`** - Simple file upload hook without progress tracking
-- **`useUploadWithProgress`** - Upload hook with real-time progress and cancellation
+Reusable hooks like `useUpload` and `useUploadWithProgress` are in the global `hooks/` folder:
 
 ```tsx
-import { useUploadWithProgress } from "@/features/visitor-home/hooks";
-import { R2_PATHS } from "@/integrations/r2";
+import { useUploadWithProgress } from "@/hooks";
 
 function MyComponent() {
     const { upload, cancel, reset, isUploading, progress, uploadedKey, error } =
         useUploadWithProgress({
-            pathPrefix: R2_PATHS.USER_UPLOADS,
-            subfolder: "avatars",
+            path: "uploads/avatars",
             onProgress: (p) => console.log(`${p.percentage}%`),
             onSuccess: (key) => console.log(`Uploaded: ${key}`),
         });
@@ -55,6 +50,14 @@ function MyComponent() {
     );
 }
 ```
+
+### Feature-Specific Hooks
+
+Feature-specific hooks (in `features/<feature>/hooks/`) should only contain logic that is:
+
+- Unique to the feature's business domain
+- Not reusable across other features
+- Tightly coupled to feature-specific data or components
 
 ### Type Naming Convention
 
