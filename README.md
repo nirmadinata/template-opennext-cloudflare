@@ -94,7 +94,8 @@ bun run cf:deploy:production
 │   └── ui/                  # Radix UI primitives
 ├── configs/                 # App configuration
 ├── features/                # Feature modules (atomic design)
-│   └── visitor-home/        # Home page feature
+│   ├── storage/            # R2 storage RPC procedures
+│   └── visitor-home/       # Home page feature
 ├── hooks/                   # React hooks
 ├── integrations/            # External service wrappers
 │   ├── auth/               # better-auth integration
@@ -102,6 +103,7 @@ bun run cf:deploy:production
 │   ├── db/                 # Drizzle ORM + D1
 │   ├── i18n/               # next-intl configuration
 │   ├── kv/                 # Cloudflare KV
+│   ├── r2/                 # Cloudflare R2 storage
 │   └── rpc/                # ORPC setup
 ├── lib/                     # Utility functions
 └── public/                  # Static assets
@@ -142,6 +144,12 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 CLOUDFLARE_ACCOUNT_ID=your_account_id
 CLOUDFLARE_DATABASE_ID=your_d1_database_id
 CLOUDFLARE_API_TOKEN=your_api_token
+
+# R2 Storage (S3-compatible API for presigned URLs)
+# Generate these in Cloudflare Dashboard > R2 > Manage R2 API Tokens
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
+R2_BUCKET_NAME=your_bucket_name
 
 # Authentication
 BETTER_AUTH_SECRET=your_secret_key
@@ -186,6 +194,68 @@ import { orpc } from "@/integrations/rpc/client";
 import { useQuery } from "@tanstack/react-query";
 
 const { data } = useQuery(orpc.home.getHomePageData.queryOptions());
+```
+
+### R2 Storage
+
+#### Server-side text/JSON storage (via R2 binding):
+
+```typescript
+import { getCFContext } from "@/integrations/cloudflare-context/server";
+import { getR2Storage } from "@/integrations/r2/server";
+
+const { env } = await getCFContext();
+const storage = getR2Storage(env);
+
+// Store JSON
+await storage.setJson("config/settings.json", { theme: "dark" });
+
+// Retrieve JSON
+const settings = await storage.getJson<{ theme: string }>(
+    "config/settings.json"
+);
+
+// Store text
+await storage.setText("data/notes.txt", "Hello, World!");
+
+// Retrieve text
+const notes = await storage.getText("data/notes.txt");
+```
+
+#### Generate presigned URLs for client uploads (via RPC):
+
+```typescript
+// Server-side (in a procedure or server component)
+import { getS3PresignedUrlGenerator } from "@/integrations/r2/server";
+
+const generator = getS3PresignedUrlGenerator();
+const { url, key, expiresAt } = await generator.generateUploadUrl({
+    key: "uploads/users/123/avatar.jpg",
+    contentType: "image/jpeg",
+    expiresIn: 3600, // 1 hour
+});
+```
+
+#### Client-side file upload:
+
+```typescript
+import { uploadToPresignedUrl } from "@/integrations/r2/client";
+
+// Get presigned URL from server (via RPC)
+const { url, key } = await orpc.storage.generateUploadUrl.call({
+    key: "uploads/avatar.jpg",
+    contentType: file.type,
+});
+
+// Upload file with progress tracking
+const result = await uploadToPresignedUrl({
+    url,
+    file: selectedFile,
+    contentType: file.type,
+    onProgress: ({ percentage }) => {
+        console.log(`Upload progress: ${percentage}%`);
+    },
+});
 ```
 
 ## Feature Module Structure

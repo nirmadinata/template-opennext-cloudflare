@@ -1,3 +1,4 @@
+import { storageRouter } from "@/features/storage/server/router";
 import { homeRouter } from "@/features/visitor-home/server/router";
 
 /**
@@ -11,6 +12,9 @@ import { homeRouter } from "@/features/visitor-home/server/router";
 export const appRouter = {
     // Public routes
     home: homeRouter,
+
+    // Storage routes (presigned URLs)
+    storage: storageRouter,
 
     // Add more feature routers here
     // Example: users: usersRouter,

@@ -4,6 +4,7 @@ import {
     FeaturesSection,
     HeroSection,
     StatsSection,
+    StorageDemoSection,
     TestimonialsSection,
 } from "../organisms";
 
@@ -22,6 +23,7 @@ export function HomePageTemplate({ data }: HomePageTemplateProps) {
         <main className="min-h-screen">
             <HeroSection data={data.hero} />
             <FeaturesSection data={data.features} />
+            <StorageDemoSection />
             <StatsSection data={data.stats} />
             <TestimonialsSection data={data.testimonials} />
         </main>

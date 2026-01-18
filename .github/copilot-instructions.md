@@ -175,6 +175,8 @@ Each feature in `features/` follows this structure:
 
 ```
 features/<feature>/
+├── utils/           # Feature-specific utilities
+├── hooks/           # Feature-specific React hooks
 ├── components/
 │   ├── atoms/       # Basic elements (Heading, Text, Icon)
 │   ├── molecules/   # Simple groups (Cards, Items)
@@ -185,6 +187,34 @@ features/<feature>/
 │   ├── procedures.ts # ORPC procedures
 │   └── router.ts    # Feature router
 └── AGENTS.md        # Feature-specific AI instructions
+```
+
+**Feature Hooks Pattern:**
+
+Feature-specific hooks encapsulate reusable stateful logic:
+
+```typescript
+// features/<feature>/hooks/use-something.ts
+"use client";
+
+import { useState, useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { orpc } from "@/integrations/rpc/client";
+
+export interface UseSomethingOptions {
+    onSuccess?: (result: SomeType) => void;
+    onError?: (error: Error) => void;
+}
+
+export function useSomething(options: UseSomethingOptions = {}) {
+    const [state, setState] = useState<SomeState>(initialState);
+
+    const doSomething = useCallback(async (input: InputType) => {
+        // Implementation using mutations, orpc calls, etc.
+    }, []);
+
+    return { doSomething, state, ...otherValues };
+}
 ```
 
 ### API Routes
@@ -205,7 +235,44 @@ features/<feature>/
 
 - **D1**: Relational data, user accounts, sessions, structured content
 - **KV**: Cache, rate limits, temporary verification tokens (via better-auth secondary storage)
-- **R2**: File uploads, media assets
+- **R2**: File uploads, media assets, JSON/text data storage
+
+### R2 Storage Pattern
+
+Two clients available for R2:
+
+1. **R2 Binding** (`getR2Storage`) - Direct binding for server-side text/JSON operations
+2. **S3 Client** (`getS3PresignedUrlGenerator`) - For presigned URL generation (client uploads)
+
+```typescript
+// Server-side text storage (uses R2 binding)
+import { getCFContext } from "@/integrations/cloudflare-context/server";
+import { getR2Storage } from "@/integrations/r2/server";
+
+const { env } = await getCFContext();
+const storage = getR2Storage(env);
+
+await storage.setJson("config/settings.json", { theme: "dark" });
+const settings = await storage.getJson("config/settings.json");
+
+// Presigned URLs for client uploads (uses S3-compatible API)
+import { getS3PresignedUrlGenerator } from "@/integrations/r2/server";
+
+const generator = getS3PresignedUrlGenerator();
+const { url } = await generator.generateUploadUrl({
+    key: "uploads/avatar.jpg",
+    contentType: "image/jpeg",
+});
+```
+
+Use constants from `@/integrations/r2` for consistent path naming:
+
+```typescript
+import { R2_PATHS, buildR2Key } from "@/integrations/r2";
+
+const key = buildR2Key(R2_PATHS.USER_UPLOADS, userId, "avatar.jpg");
+// Result: "uploads/users/{userId}/avatar.jpg"
+```
 
 ### External Dependencies
 
@@ -213,6 +280,7 @@ features/<feature>/
 - **better-auth**: All auth logic centralized in `integrations/auth/`
 - **Drizzle**: Database schema is source of truth, migrations auto-generated
 - **next-intl**: Wrapped in `integrations/i18n/` for custom locale logic
+- **aws4fetch**: Used for R2 S3-compatible API (presigned URLs)
 
 ## Common Pitfalls
 

@@ -1,15 +1,19 @@
 # Visitor Home Feature
 
 ## Purpose
-Public-facing home page for visitors. Displays hero, features, testimonials, and stats sections.
+
+Public-facing home page for visitors. Displays hero, features, testimonials, stats sections, and R2 storage demo.
 
 ## Structure
+
 ```
 visitor-home/
-├── components/           # Atomic design components
+├── utils/               # Feature-specific utilities
+├── hooks/               # Feature-specific React hooks (useUpload, useUploadWithProgress)
+├── components/          # Atomic design components
 │   ├── atoms/           # Basic elements (Heading, Text, Icon)
-│   ├── molecules/       # Simple groups (FeatureCard, StatCard, TestimonialCard, TestimonialCarousel)
-│   ├── organisms/       # Page sections (HeroSection, FeaturesSection, etc.)
+│   ├── molecules/       # Simple groups (FeatureCard, StatCard, TestimonialCard, FileUploadCard, TextStorageCard)
+│   ├── organisms/       # Page sections (HeroSection, FeaturesSection, StorageDemoSection, etc.)
 │   └── templates/       # Full layouts (HomePageTemplate, ClientHomeContent)
 ├── server/              # API layer
 │   ├── schemas.ts       # Zod schemas for type safety
@@ -21,12 +25,46 @@ visitor-home/
 
 ## Key Patterns
 
+### Feature-Specific Hooks
+
+Hooks encapsulate reusable stateful logic for the feature:
+
+- **`useUpload`** - Simple file upload hook without progress tracking
+- **`useUploadWithProgress`** - Upload hook with real-time progress and cancellation
+
+```tsx
+import { useUploadWithProgress } from "@/features/visitor-home/hooks";
+import { R2_PATHS } from "@/integrations/r2";
+
+function MyComponent() {
+    const { upload, cancel, reset, isUploading, progress, uploadedKey, error } =
+        useUploadWithProgress({
+            pathPrefix: R2_PATHS.USER_UPLOADS,
+            subfolder: "avatars",
+            onProgress: (p) => console.log(`${p.percentage}%`),
+            onSuccess: (key) => console.log(`Uploaded: ${key}`),
+        });
+
+    return (
+        <div>
+            <button onClick={() => upload(file)} disabled={isUploading}>
+                {isUploading ? `${progress.percentage}%` : "Upload"}
+            </button>
+            {isUploading && <button onClick={cancel}>Cancel</button>}
+        </div>
+    );
+}
+```
+
 ### Type Naming Convention
+
 All types exported from schemas use the `Type` suffix:
+
 - `HeroSectionType`, `FeatureItemType`, `StatItemType`, etc.
 - This avoids naming conflicts with components
 
 ### Adding a New Section
+
 1. Create schema in `server/schemas.ts` with `Type` suffix for exports
 2. Add mock data in `server/mock-data.ts`
 3. Create procedure in `server/procedures.ts` using `publicProcedure` from `@/integrations/rpc`
@@ -35,26 +73,47 @@ All types exported from schemas use the `Type` suffix:
 6. Create components following atomic design
 
 ### Component Hierarchy
+
 - **Atoms**: Pure presentational, no business logic
 - **Molecules**: Combine atoms, receive single data object (some are client components)
 - **Organisms**: Feature-specific sections, may be client components for interactivity
 - **Templates**: Compose organisms into page layouts
 
 ### Interactive Components
+
 Some molecules/organisms are client components (`"use client"`):
+
 - `StatCard` - Animated counting on viewport entry
 - `TestimonialCarousel` - Auto-play carousel with keyboard navigation
 - `TestimonialsCarouselSection` - Carousel-based testimonials section
 - `ClientHomeContent` - Full client-side page with React Query
+- `FileUploadCard` - Client-side file upload to R2 via presigned URLs
+- `TextStorageCard` - Demo for server-side text storage
+
+### R2 Storage Demo Components
+
+The `StorageDemoSection` organism demonstrates R2 storage integration:
+
+1. **FileUploadCard** (client component):
+    - Uses `useUploadWithProgress` hook from `../../hooks`
+    - Provides progress tracking and cancel functionality
+    - Validates file type and size using utilities from `@/integrations/r2/client`
+
+2. **TextStorageCard** (client component):
+    - Demonstrates server-side JSON/text storage pattern
+    - Uses `R2_PATHS` constants for consistent key naming
 
 ### API Pattern
+
 All procedures use ORPC with:
+
 - `.output()` for response schema validation
 - `.handler()` for business logic
 
 ## Data Flow
 
 ### Server-Side Rendering (SSR)
+
 ```tsx
 // app/page.tsx
 import { serverRpc } from "@/integrations/rpc/server";
@@ -64,21 +123,23 @@ return <HomePageTemplate data={data} />;
 ```
 
 ### Client-Side Rendering (CSR)
+
 ```tsx
 // features/visitor-home/components/templates/client-home-content.tsx
 import { orpc } from "@/integrations/rpc/client";
 
-const { data, isLoading } = useQuery(
-    orpc.home.getHomePageData.queryOptions()
-);
+const { data, isLoading } = useQuery(orpc.home.getHomePageData.queryOptions());
 ```
 
 Compare both approaches at:
+
 - SSR: `/` (main page)
 - CSR: `/client-example` (demonstrates React Query)
 
 ## Extending
+
 To add real database integration:
+
 1. Import `getCFContext` from `@/integrations/cloudflare-context/server` and `getDB` from `@/integrations/db/server`
 2. Replace mock data with D1 queries in procedure handlers
 3. Add database schema in `integrations/db/schema.ts`
