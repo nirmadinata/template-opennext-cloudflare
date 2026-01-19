@@ -238,10 +238,7 @@ let s3Client: S3PresignedUrlGenerator | null = null;
  * ```
  */
 export function getS3PresignedUrlGenerator(): R2PresignedUrlGenerator {
-    if (!s3Client) {
-        const config = getS3Config();
-        s3Client = new S3PresignedUrlGenerator(config);
-    }
+    s3Client ??= new S3PresignedUrlGenerator(getS3Config());
     return s3Client;
 }
 
