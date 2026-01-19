@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/d1";
 import * as schema from "../schema";
 
 function createDB(env: CloudflareEnv) {
-    return drizzle(env.INTERNAL_DB, {
+    return drizzle(env.MAIN_DB, {
         schema,
         casing: "snake_case",
     });

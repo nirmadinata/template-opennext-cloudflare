@@ -2,7 +2,7 @@ import { SecondaryStorage } from "better-auth";
 import "server-only";
 
 function createKV(env: CloudflareEnv): SecondaryStorage {
-    const kv = env.INTERNAL_KV;
+    const kv = env.MAIN_KV;
     return {
         delete: kv.delete,
         get: kv.get,

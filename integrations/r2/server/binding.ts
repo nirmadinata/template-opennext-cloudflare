@@ -5,7 +5,7 @@ import type { R2TextOptions, R2TextStorage } from "../types";
 /**
  * R2 Binding-based text storage implementation
  *
- * Uses the direct R2 binding (INTERNAL_BUCKET) for server-side operations.
+ * Uses the direct R2 binding (MAIN_BUCKET) for server-side operations.
  * This is more efficient than S3 API for server-to-R2 communication.
  */
 class R2BindingStorage implements R2TextStorage {
@@ -116,7 +116,7 @@ let storage: R2BindingStorage | null = null;
  * Uses the R2 binding for efficient server-side operations.
  * This is preferred over S3 API for server-side text/JSON storage.
  *
- * @param env - Cloudflare environment with INTERNAL_BUCKET binding
+ * @param env - Cloudflare environment with MAIN_BUCKET binding
  *
  * @example
  * ```ts
@@ -140,12 +140,7 @@ let storage: R2BindingStorage | null = null;
  * ```
  */
 export function getR2Storage(env: CloudflareEnv): R2TextStorage {
-    if (!storage) {
-        if (!env.INTERNAL_BUCKET) {
-            throw new Error("INTERNAL_BUCKET R2 binding is not available");
-        }
-        storage = new R2BindingStorage(env.INTERNAL_BUCKET);
-    }
+    storage ??= new R2BindingStorage(env.MAIN_BUCKET);
     return storage;
 }
 
@@ -155,12 +150,7 @@ export function getR2Storage(env: CloudflareEnv): R2TextStorage {
  * Returns the full implementation with additional methods like getRaw and head.
  */
 export function getR2BindingStorage(env: CloudflareEnv): R2BindingStorage {
-    if (!storage) {
-        if (!env.INTERNAL_BUCKET) {
-            throw new Error("INTERNAL_BUCKET R2 binding is not available");
-        }
-        storage = new R2BindingStorage(env.INTERNAL_BUCKET);
-    }
+    storage ??= new R2BindingStorage(env.MAIN_BUCKET);
     return storage;
 }
 
