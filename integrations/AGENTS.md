@@ -2,7 +2,7 @@
 
 ## Purpose
 
-External service wrappers and API clients. Each integration provides a consistent interface to interact with external services like Cloudflare D1, KV, R2, authentication, and RPC.
+External service wrappers and API clients. Each integration provides a consistent interface to interact with external services like Cloudflare D1, KV, R2, authentication, email, and RPC.
 
 ## Structure
 
@@ -21,11 +21,13 @@ integrations/
 │   ├── schema.ts          # Drizzle schema definitions
 │   ├── migrations/        # Generated SQL migrations
 │   └── drizzle.config.ts  # Drizzle configuration
+├── email/                 # Email sending (Plunk)
+│   └── index.ts           # Client initialization
 ├── i18n/                  # Internationalization (next-intl)
 │   ├── server/            # getUserLocale, setUserLocale
 │   └── lib/               # Request config, types, utils
 ├── kv/                    # Cloudflare KV storage
-│   └── server/            # getKVStorage
+│   └── server/            # getKV
 ├── r2/                    # Cloudflare R2 storage
 │   ├── client/            # Client-side upload utilities
 │   ├── server/            # S3 client, R2 binding operations
@@ -83,6 +85,20 @@ import { auth } from "@/integrations/auth/server";
 const session = await auth.api.getSession({ headers });
 ```
 
+### KV Storage
+
+```typescript
+import { getKV } from "@/integrations/kv/server";
+
+const { env } = await getCFContext();
+const kv = getKV(env);
+
+// KV implements better-auth SecondaryStorage interface
+await kv.set("key", "value", 60); // 60s TTL
+const value = await kv.get("key");
+await kv.delete("key");
+```
+
 ### R2 Storage
 
 ```typescript
@@ -113,6 +129,19 @@ const data = await serverRpc.home.getHomePageData();
 // Client-side (with TanStack Query)
 import { orpc } from "@/integrations/rpc/client";
 const { data } = useQuery(orpc.home.getHomePageData.queryOptions());
+```
+
+### Email (Plunk)
+
+```typescript
+import { getEmailClient } from "@/integrations/email";
+
+const email = getEmailClient();
+await email.emails.send({
+    to: "user@example.com",
+    subject: "Welcome",
+    body: "Hello world!",
+});
 ```
 
 ### Internationalization
@@ -150,24 +179,24 @@ integrations/<name>/
 ### Example: New Service Integration
 
 ```typescript
-// integrations/email/server/index.ts
+// integrations/sms/server/index.ts
 import "server-only";
 import { getCFContext } from "@/integrations/cloudflare-context/server";
 
-let emailClient: EmailClient | null = null;
+let smsClient: SMSClient | null = null;
 
-export function getEmailClient(): EmailClient {
-    if (!emailClient) {
-        emailClient = new EmailClient({
-            apiKey: process.env.EMAIL_API_KEY,
+export function getSMSClient(): SMSClient {
+    if (!smsClient) {
+        smsClient = new SMSClient({
+            apiKey: process.env.SMS_API_KEY,
         });
     }
-    return emailClient;
+    return smsClient;
 }
 
-// integrations/email/index.ts
-export { getEmailClient } from "./server";
-export type { EmailOptions, EmailResult } from "./types";
+// integrations/sms/index.ts
+export { getSMSClient } from "./server";
+export type { SMSOptions, SMSResult } from "./types";
 ```
 
 ## Storage Decision Guide
