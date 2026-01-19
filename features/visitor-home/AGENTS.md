@@ -12,16 +12,28 @@ visitor-home/
 ├── hooks/               # Feature-specific React hooks (feature-only logic)
 ├── components/          # Atomic design components
 │   ├── atoms/           # Basic elements (Heading, Text, Icon)
-│   ├── molecules/       # Simple groups (FeatureCard, StatCard, TestimonialCard, FileUploadCard, TextStorageCard)
-│   ├── organisms/       # Page sections (HeroSection, FeaturesSection, StorageDemoSection, etc.)
+│   ├── molecules/       # Groups (FeatureCard, TestimonialCarousel, FileUploadCard, etc.)
+│   ├── organisms/       # Sections (HeroSection, StorageDemoSection, TestimonialsCarouselSection)
 │   └── templates/       # Full layouts (HomePageTemplate, ClientHomeContent)
 ├── server/              # API layer
 │   ├── schemas.ts       # Zod schemas for type safety
 │   ├── mock-data.ts     # Mock data (replace with DB queries)
 │   ├── procedures.ts    # ORPC procedures (API endpoints)
-│   └── router.ts        # Feature router (compose procedures)
+│   └── index.ts         # Server exports (exports visitorHomeRoutes)
 └── index.ts             # Public exports
 ```
+
+## Key Components
+
+### StorageDemoSection
+
+Demonstrates the integration with the `storage` feature. It allows visitors to:
+- Upload files using client-side presigned URLs (via `FileUploadCard` molecule)
+- Store text/JSON data using server-side R2 bindings (via `TextStorageCard` molecule)
+
+### TestimonialsCarouselSection
+
+A dynamic carousel of testimonials, built using the `TestimonialCarousel` molecule which manages the swiping/navigating logic.
 
 ## Key Patterns
 

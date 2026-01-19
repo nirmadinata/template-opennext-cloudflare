@@ -11,8 +11,7 @@ storage/
 ├── server/
 │   ├── schemas.ts     # Zod schemas for storage operations
 │   ├── procedures.ts  # RPC procedures (presigned URL generation)
-│   ├── router.ts      # Feature router
-│   └── index.ts       # Server exports
+│   └── index.ts       # Server exports (exports storageRoutes)
 └── index.ts           # Public exports
 ```
 

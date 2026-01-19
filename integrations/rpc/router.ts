@@ -1,5 +1,5 @@
-import { storageRouter } from "@/features/storage/server/router";
-import { homeRouter } from "@/features/visitor-home/server/router";
+import { storageRoutes as storage } from "@/features/storage/server";
+import { visitorHomeRoutes as home } from "@/features/visitor-home/server";
 
 /**
  * App Router
@@ -11,10 +11,10 @@ import { homeRouter } from "@/features/visitor-home/server/router";
  */
 export const appRouter = {
     // Public routes
-    home: homeRouter,
+    home,
 
     // Storage routes (presigned URLs)
-    storage: storageRouter,
+    storage,
 
     // Add more feature routers here
     // Example: users: usersRouter,
