@@ -11,5 +11,5 @@
  */
 
 export { createRpcHandler } from "./handler";
-export { publicProcedure, authProcedure, adminProcedure, base } from "./base";
+export { base } from "./base";
 export type { AppRouter } from "./router";
