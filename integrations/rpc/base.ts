@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 
 import { os } from "@orpc/server";
-import { z } from "better-auth";
+import { z } from "zod";
 
 import { getAuth } from "@/integrations/auth/server";
 import { getCFContext } from "@/integrations/cloudflare-context";

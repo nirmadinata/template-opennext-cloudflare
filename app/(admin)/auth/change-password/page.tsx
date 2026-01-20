@@ -1,7 +1,5 @@
-export default function Page() {
-    return (
-        <div>
-            <p>Change Password Page</p>
-        </div>
-    );
+import { ChangePasswordForm } from "@/features/dashboard-auth/components";
+
+export default function ChangePasswordPage() {
+    return <ChangePasswordForm />;
 }

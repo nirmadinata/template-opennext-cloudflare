@@ -12,14 +12,16 @@ import {
     StatsSectionSchema,
     TestimonialsSectionSchema,
 } from "./schemas";
-import { publicProcedure } from "@/integrations/rpc";
+import { base } from "@/integrations/rpc";
+
+const domain = base;
 
 /**
  * Get Hero Section
  *
  * Returns the hero section data for the home page.
  */
-export const getHeroSection = publicProcedure
+export const getHeroSection = domain
     .output(HeroSectionSchema)
     .handler(async () => {
         // Simulate async data fetching
@@ -32,7 +34,7 @@ export const getHeroSection = publicProcedure
  *
  * Returns the features section data for the home page.
  */
-export const getFeaturesSection = publicProcedure
+export const getFeaturesSection = domain
     .output(FeaturesSectionSchema)
     .handler(async () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -44,7 +46,7 @@ export const getFeaturesSection = publicProcedure
  *
  * Returns the testimonials section data for the home page.
  */
-export const getTestimonialsSection = publicProcedure
+export const getTestimonialsSection = domain
     .output(TestimonialsSectionSchema)
     .handler(async () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -56,7 +58,7 @@ export const getTestimonialsSection = publicProcedure
  *
  * Returns the stats section data for the home page.
  */
-export const getStatsSection = publicProcedure
+export const getStatsSection = domain
     .output(StatsSectionSchema)
     .handler(async () => {
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -69,7 +71,7 @@ export const getStatsSection = publicProcedure
  * Returns all sections for the home page in a single request.
  * Useful for initial page load.
  */
-export const getHomePageData = publicProcedure
+export const getHomePageData = domain
     .output(HomePageDataSchema)
     .handler(async () => {
         await new Promise((resolve) => setTimeout(resolve, 100));

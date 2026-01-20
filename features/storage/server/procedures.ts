@@ -4,7 +4,9 @@ import {
     PresignedUrlResponseSchema,
 } from "./schemas";
 import { getS3PresignedUrlGenerator } from "@/integrations/r2/server";
-import { publicProcedure } from "@/integrations/rpc";
+import { base } from "@/integrations/rpc";
+
+const domain = base;
 
 /**
  * Generate Upload Presigned URL
@@ -21,7 +23,7 @@ import { publicProcedure } from "@/integrations/rpc";
  * });
  * ```
  */
-export const generateUploadUrl = publicProcedure
+export const generateUploadUrl = domain
     .input(GenerateUploadUrlInputSchema)
     .output(PresignedUrlResponseSchema)
     .handler(async ({ input }) => {
@@ -51,7 +53,7 @@ export const generateUploadUrl = publicProcedure
  * });
  * ```
  */
-export const generateDownloadUrl = publicProcedure
+export const generateDownloadUrl = domain
     .input(GenerateDownloadUrlInputSchema)
     .output(PresignedUrlResponseSchema)
     .handler(async ({ input }) => {
@@ -79,7 +81,7 @@ export const generateDownloadUrl = publicProcedure
  * });
  * ```
  */
-export const generateDeleteUrl = publicProcedure
+export const generateDeleteUrl = domain
     .input(GenerateDownloadUrlInputSchema) // Same schema as download
     .output(PresignedUrlResponseSchema)
     .handler(async ({ input }) => {

@@ -28,6 +28,7 @@ visitor-home/
 ### StorageDemoSection
 
 Demonstrates the integration with the `storage` feature. It allows visitors to:
+
 - Upload files using client-side presigned URLs (via `FileUploadCard` molecule)
 - Store text/JSON data using server-side R2 bindings (via `TextStorageCard` molecule)
 
