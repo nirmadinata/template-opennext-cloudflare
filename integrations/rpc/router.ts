@@ -1,3 +1,4 @@
+import { routes as dashboardAuth } from "@/features/dashboard-auth/server";
 import { storageRoutes as storage } from "@/features/storage/server";
 import { visitorHomeRoutes as home } from "@/features/visitor-home/server";
 
@@ -15,6 +16,9 @@ export const appRouter = {
 
     // Storage routes (presigned URLs)
     storage,
+
+    // Dashboard authentication routes
+    dashboardAuth,
 
     // Add more feature routers here
     // Example: users: usersRouter,

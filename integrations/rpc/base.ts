@@ -1,4 +1,3 @@
-import { AppContext } from "next/app";
 import { headers } from "next/headers";
 
 import { os } from "@orpc/server";
@@ -8,8 +7,9 @@ import { getAuth } from "@/integrations/auth/server";
 import { getCFContext } from "@/integrations/cloudflare-context";
 import { getDB } from "@/integrations/db/server";
 import { getKV } from "@/integrations/kv";
+import { BaseContext } from "@/integrations/rpc/types";
 
-export const base = os.$context<AppContext>().errors({
+export const base = os.$context<BaseContext>().errors({
     INTERNAL_SERVER_ERROR: {
         message: "An internal server error occurred",
     },

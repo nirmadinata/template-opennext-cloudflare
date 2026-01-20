@@ -2,6 +2,7 @@ import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
 
 import { appRouter } from "./router";
+import { getCFContext } from "@/integrations/cloudflare-context/server";
 
 /**
  * Create RPC handler for Next.js API routes
@@ -20,9 +21,12 @@ export function createRpcHandler() {
     });
 
     return async (request: Request) => {
+        const { env } = await getCFContext();
         const { matched, response } = await handler.handle(request, {
             prefix: "/api/rpc",
-            context: {},
+            context: {
+                env,
+            },
         });
 
         if (matched) {
