@@ -32,10 +32,7 @@ export function ChangePasswordForm({
             />
 
             <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="grid gap-4"
-                >
+                <form className="grid gap-4" onSubmit={onSubmit}>
                     <FormField
                         control={form.control}
                         name="password"

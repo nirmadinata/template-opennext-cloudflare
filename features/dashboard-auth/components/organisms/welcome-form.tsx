@@ -2,11 +2,8 @@
 
 import * as React from "react";
 
-import Link from "next/link";
-
-import { useLoginForm } from "../../hooks/use-login-form"; // Updated import
+import { useWelcomeForm } from "../../hooks/use-welcome-form";
 import { AuthHeader } from "../molecules/auth-header";
-import { OAuthButtons } from "../molecules/oauth-buttons";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -19,16 +16,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-type LoginFormProps = React.HTMLAttributes<HTMLDivElement>;
+type WelcomeFormProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function LoginForm({ className, ...props }: LoginFormProps) {
-    const { form, isLoading, onSubmit } = useLoginForm(); // Use hook
+export function WelcomeForm({ className, ...props }: WelcomeFormProps) {
+    const { form, isLoading, onSubmit } = useWelcomeForm();
 
     return (
         <div className={cn("grid gap-6", className)} {...props}>
             <AuthHeader
-                title="Welcome back"
-                description="Enter your email to sign in to your account"
+                title="Welcome Aboard!"
+                description="Enter your information below to create your account"
             />
 
             <Form {...form}>
@@ -56,23 +53,54 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                     />
                     <FormField
                         control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="username"
+                                        type="text"
+                                        autoCapitalize="none"
+                                        autoCorrect="off"
+                                        disabled={isLoading}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <div className="flex items-center justify-between">
-                                    <FormLabel>Password</FormLabel>
-                                    <Link
-                                        href="/auth/forgot-password"
-                                        className="text-muted-foreground text-sm font-medium hover:opacity-75"
-                                    >
-                                        Forgot password?
-                                    </Link>
-                                </div>
+                                <FormLabel>Password</FormLabel>
                                 <FormControl>
                                     <Input
                                         placeholder="••••••••"
                                         type="password"
-                                        autoComplete="current-password"
+                                        autoComplete="new-password"
+                                        disabled={isLoading}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="passwordConfirm"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="••••••••"
+                                        type="password"
+                                        autoComplete="new-password"
                                         disabled={isLoading}
                                         {...field}
                                     />
@@ -85,23 +113,10 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                         {isLoading && (
                             <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                         )}
-                        Sign In
+                        Create Account
                     </Button>
                 </form>
             </Form>
-
-            <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background text-muted-foreground px-2">
-                        Or continue with
-                    </span>
-                </div>
-            </div>
-
-            <OAuthButtons isLoading={isLoading} />
         </div>
     );
 }

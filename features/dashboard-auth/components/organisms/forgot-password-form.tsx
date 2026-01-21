@@ -34,10 +34,7 @@ export function ForgotPasswordForm({
             />
 
             <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="grid gap-4"
-                >
+                <form onSubmit={onSubmit} className="grid gap-4">
                     <FormField
                         control={form.control}
                         name="email"

@@ -19,14 +19,14 @@ export function useChangePasswordForm() {
         },
     });
 
-    async function onSubmit(values: z.infer<typeof resetPasswordFormSchema>) {
+    const onSubmit = form.handleSubmit(async function onSubmit(values) {
         setIsLoading(true);
         console.log("Change Password values:", values);
         // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 3000);
-    }
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        setIsLoading(false);
+    });
 
     return {
         form,

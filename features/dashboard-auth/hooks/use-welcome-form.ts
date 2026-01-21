@@ -6,22 +6,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { loginFormSchema } from "../components/form-schemas";
+import { welcomeFormSchema } from "../components/form-schemas";
 
-export function useLoginForm() {
+export function useWelcomeForm() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const form = useForm<z.infer<typeof loginFormSchema>>({
-        resolver: zodResolver(loginFormSchema),
+    const form = useForm<z.infer<typeof welcomeFormSchema>>({
+        resolver: zodResolver(welcomeFormSchema),
         defaultValues: {
             email: "",
+            username: "",
             password: "",
+            passwordConfirm: "",
         },
     });
 
     const onSubmit = form.handleSubmit(async function onSubmit(values) {
         setIsLoading(true);
-        console.log("Login values:", values);
+        console.log("Welcome/Register values:", values);
         // Simulate API call
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
