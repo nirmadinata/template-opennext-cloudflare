@@ -1,18 +1,23 @@
-import { onboardFirstTimeSchema } from "@/features/dashboard-auth/server/schemas";
+import { users } from "@/integrations/db";
 import { base } from "@/integrations/rpc";
-import { initAuthenticationMiddleware } from "@/integrations/rpc/base";
+import {
+    initAuthenticationMiddleware,
+    initStorageMiddleware,
+} from "@/integrations/rpc/base";
 
 const domain = base
     /**
      * register middlewares
      */
-    .use(initAuthenticationMiddleware);
+    .use(initAuthenticationMiddleware)
+    .use(initStorageMiddleware);
 
-export const onboardFirstTime = domain
-    .input(onboardFirstTimeSchema.input)
-    .output(onboardFirstTimeSchema.output)
-    .handler(async ({}) => {
-        // TODO: implement the procedure logic here
+export const checkFirstTimeOnboard = domain.handler(async function ({
+    context: { db },
+}) {
+    const total = await db.$count(users);
 
-        return;
-    });
+    return {
+        isFirstTime: total === 0,
+    };
+});
