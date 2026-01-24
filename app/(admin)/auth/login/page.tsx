@@ -1,12 +1,13 @@
-import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/features/dashboard-auth/components";
+import { serverRpc } from "@/integrations/rpc/server";
 
-export const metadata: Metadata = {
-    title: "Login",
-    description: "Login to your account",
-};
+export default async function LoginPage() {
+    const res = await serverRpc.dashboardAuth.checkIsFirstTimeUser();
+    if (res.value) {
+        redirect("/welcome");
+    }
 
-export default function LoginPage() {
     return <LoginForm />;
 }

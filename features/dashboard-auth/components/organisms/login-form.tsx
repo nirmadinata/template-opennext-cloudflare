@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 type LoginFormProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
-    const { form, isLoading, onSubmit } = useLoginForm(); // Use hook
+    const { form, isLoading, onSubmitLoginByEmail } = useLoginForm(); // Use hook
 
     return (
         <div className={cn("grid gap-6", className)} {...props}>
@@ -32,7 +32,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
             />
 
             <Form {...form}>
-                <form onSubmit={onSubmit} className="grid gap-4">
+                <form onSubmit={onSubmitLoginByEmail} className="grid gap-4">
                     <FormField
                         control={form.control}
                         name="email"
