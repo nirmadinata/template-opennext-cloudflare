@@ -4,7 +4,7 @@ import { os } from "@orpc/server";
 import { z } from "zod";
 
 import { getAuth } from "@/integrations/auth/server";
-import { getCFContext } from "@/integrations/cloudflare-context";
+import { getCFContextSync } from "@/integrations/cloudflare-context";
 import { getDB } from "@/integrations/db/server";
 import { getKV } from "@/integrations/kv";
 
@@ -56,26 +56,33 @@ export const injectHeadersMiddleware = base.middleware(
         })
 );
 
-export const initStorageMiddleware = base.middleware(
-    async ({ context, next }) => {
-        const env = (await getCFContext()).env;
+export const injectCFContextMiddleware = base.middleware(({ context, next }) =>
+    next({
+        context: {
+            ...context,
+            cfCtx: getCFContextSync(),
+        },
+    })
+);
+
+export const initStorageMiddleware = injectCFContextMiddleware.concat(
+    ({ context, next }) => {
         return next({
             context: {
                 ...context,
-                kv: getKV(env),
-                db: getDB(env),
+                kv: getKV(context.cfCtx.env),
+                db: getDB(context.cfCtx.env),
             },
         });
     }
 );
 
-export const initAuthenticationMiddleware = base.middleware(
-    async ({ context, next }) => {
-        const env = (await getCFContext()).env;
+export const initAuthenticationMiddleware = injectCFContextMiddleware.concat(
+    ({ context, next }) => {
         return next({
             context: {
                 ...context,
-                auth: getAuth(env),
+                auth: getAuth(context.cfCtx.env),
             },
         });
     }

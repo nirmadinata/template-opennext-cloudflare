@@ -1,5 +1,3 @@
-import { headers } from "next/headers";
-
 import { z } from "zod";
 
 import { users } from "@/integrations/db";
@@ -7,12 +5,14 @@ import { base } from "@/integrations/rpc";
 import {
     initAuthenticationMiddleware,
     initStorageMiddleware,
+    injectHeadersMiddleware,
 } from "@/integrations/rpc/base";
 
 const domain = base
     /**
      * register middlewares
      */
+    .use(injectHeadersMiddleware)
     .use(initAuthenticationMiddleware)
     .use(initStorageMiddleware);
 
@@ -31,11 +31,10 @@ export const checkIsFirstTimeUser = domain
     });
 
 export const getAuthSession = domain.handler(async function ({
-    context: { auth },
+    context: { auth, headers },
 }) {
-    const header = await headers();
     const session = await auth.api.getSession({
-        headers: header,
+        headers,
     });
 
     return {
