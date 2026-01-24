@@ -16,10 +16,10 @@
         "cf:deploy:local": "opennextjs-cloudflare deploy -e local",
         "cf:deploy:production": "opennextjs-cloudflare deploy -e production",
         "db:generate": "drizzle-kit generate --config ./integrations/db/drizzle.config.ts",
-        "db:migrate:local": "wrangler -e local d1 migrations apply template",
-        "db:migrate:production": "wrangler -e production d1 migrations apply template",
-        "db:studio:local": "NODE_ENV=development drizzle-kit studio --config ./integrations/db/drizzle.config.ts",
-        "db:studio:production": "NODE_ENV=production drizzle-kit studio --config ./integrations/db/drizzle.config.ts"
+        "db:local:migrate": "wrangler -e local d1 migrations apply template",
+        "db:local:studio": "NODE_ENV=development drizzle-kit studio --config ./integrations/db/drizzle.config.ts",
+        "db:production:migrate": "wrangler -e production d1 migrations apply template",
+        "db:production:studio": "NODE_ENV=production drizzle-kit studio --config ./integrations/db/drizzle.config.ts"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",
