@@ -81,7 +81,11 @@ import { authClient } from "@/integrations/auth/client";
 const session = await authClient.getSession();
 
 // Server-side
-import { auth } from "@/integrations/auth/server";
+import { getAuth } from "@/integrations/auth/server";
+import { getCFContext } from "@/integrations/cloudflare-context/server";
+
+const { env } = await getCFContext();
+const auth = getAuth(env);
 const session = await auth.api.getSession({ headers });
 ```
 

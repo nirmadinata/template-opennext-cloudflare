@@ -9,7 +9,7 @@ This is a Next.js 15 application designed to run on **Cloudflare Workers** using
 - **Cloudflare R2** for file storage
 - **better-auth** for authentication with admin plugin
 - **next-intl** for internationalization (English/Arabic)
-- **TanStack Query** and **TanStack Form** for data fetching and forms
+- **TanStack Query** and **React Hook Form** for data fetching and forms
 - **ORPC** for type-safe RPC APIs
 
 ## Critical Patterns
@@ -63,7 +63,7 @@ const { data } = useQuery(orpc.home.getHomePageData.queryOptions());
 
 1. Define Zod schemas in `features/<feature>/server/schemas.ts`
 2. Create procedures using `publicProcedure`, `authProcedure`, or `adminProcedure` from `@/integrations/rpc`
-3. Export router from `features/<feature>/server/router.ts`
+3. Export router from `features/<feature>/server/index.ts`
 4. Register in `integrations/rpc/router.ts`
 
 ### Authentication Integration

@@ -6,10 +6,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import { LocaleChangeHandler } from "./locale-change-handler";
-import {
-    tanstackQueryClient,
-    tanstackQueryPlugins,
-} from "@/lib/tanstack-query";
+import { tanstackQueryClient, tanstackPlugins } from "@/lib/tanstack-query";
 
 type Props = PropsWithChildren;
 
@@ -17,7 +14,7 @@ export function ClientProvider({ children }: Props) {
     return (
         <QueryClientProvider client={tanstackQueryClient}>
             {children}
-            <TanStackDevtools plugins={tanstackQueryPlugins} />
+            <TanStackDevtools plugins={tanstackPlugins} />
             <LocaleChangeHandler />
         </QueryClientProvider>
     );

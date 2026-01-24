@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+
 import { LoginForm } from "@/features/dashboard-auth/components";
 
 export const metadata: Metadata = {

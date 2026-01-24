@@ -10,8 +10,9 @@ A production-ready Next.js 15 template designed to run on **Cloudflare Workers**
 - **Storage**: [Cloudflare KV](https://developers.cloudflare.com/kv/) (sessions) + [R2](https://developers.cloudflare.com/r2/) (files)
 - **Authentication**: [better-auth](https://www.better-auth.com/) with admin plugin
 - **API**: [ORPC](https://orpc.unnoq.com/) for type-safe RPC
-- **Data Fetching**: [TanStack Query](https://tanstack.com/query) + [TanStack Form](https://tanstack.com/form)
+- **Data Fetching**: [TanStack Query](https://tanstack.com/query) + [React Hook Form](https://react-hook-form.com/)
 - **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/) (English/Arabic)
+- **Email**: [Plunk](https://useplunk.com/) (Transactional)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + [Radix UI](https://www.radix-ui.com/)
 
 ## Quick Start
@@ -90,14 +91,16 @@ bun run cf:deploy:production
 │   └── client-example/      # CSR example page
 ├── components/
 │   ├── molecules/           # Composite client components
-│   ├── templates/           # Email templates
 │   └── ui/                  # Radix UI primitives
 ├── configs/                 # App configuration
 ├── features/                # Feature modules (atomic design)
-│   ├── storage/            # R2 storage RPC procedures
-│   └── visitor-home/       # Home page feature
+│   ├── dashboard-auth/      # Dashboard authentication
+│   ├── storage/             # R2 storage RPC procedures
+│   └── visitor-home/        # Home page feature
 ├── hooks/                   # React hooks
 ├── integrations/            # External service wrappers
+│   ├── email/               # Plunk email client
+│   └── ...
 │   ├── auth/               # better-auth integration
 │   ├── cloudflare-context/ # Cloudflare bindings
 │   ├── db/                 # Drizzle ORM + D1

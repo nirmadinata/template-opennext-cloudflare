@@ -84,7 +84,7 @@ All types exported from schemas use the `Type` suffix:
 1. Create schema in `server/schemas.ts` with `Type` suffix for exports
 2. Add mock data in `server/mock-data.ts`
 3. Create procedure in `server/procedures.ts` using `publicProcedure` from `@/integrations/rpc`
-4. Export from `server/router.ts`
+4. Export from `server/index.ts`
 5. Register router in `integrations/rpc/router.ts`
 6. Create components following atomic design
 

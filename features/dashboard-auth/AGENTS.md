@@ -25,10 +25,10 @@ All form logic must be extracted into custom hooks located in `hooks/`. Componen
 
 **Example:**
 
-`useLogin.ts`:
+`use-login-form.ts`:
 
 ```typescript
-export function useLogin() {
+export function useLoginForm() {
     const form = useForm({ ... });
     // ... logic
     return { form, isLoading, onSubmit };
@@ -39,7 +39,7 @@ export function useLogin() {
 
 ```tsx
 export function LoginForm() {
-    const { form, isLoading, onSubmit } = useLogin();
+    const { form, isLoading, onSubmit } = useLoginForm();
     return <Form {...form}>{/* ... UI */}</Form>;
 }
 ```

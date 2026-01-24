@@ -30,6 +30,7 @@ const eslintConfig = defineConfig([
             "cloudflare-env.d.ts",
             "**/migrations/**",
             "**/components/ui/**",
+            ".localflare",
         ],
     },
     ...nextVitals,

@@ -7,9 +7,8 @@ import { getAuth } from "@/integrations/auth/server";
 import { getCFContext } from "@/integrations/cloudflare-context";
 import { getDB } from "@/integrations/db/server";
 import { getKV } from "@/integrations/kv";
-import { BaseContext } from "@/integrations/rpc/types";
 
-export const base = os.$context<BaseContext>().errors({
+export const base = os.errors({
     INTERNAL_SERVER_ERROR: {
         message: "An internal server error occurred",
     },
