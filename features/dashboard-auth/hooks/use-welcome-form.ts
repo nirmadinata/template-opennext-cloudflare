@@ -13,6 +13,12 @@ import { ROLE_ENUM } from "@/integrations/auth/constants";
 export function useWelcomeForm() {
     const form = useForm({
         resolver: zodResolver(welcomeFormSchema),
+        defaultValues: {
+            email: "",
+            username: "",
+            password: "",
+            passwordConfirm: "",
+        },
     });
 
     const { mutateAsync: createUser, isPending: isLoadingCreateUser } =
