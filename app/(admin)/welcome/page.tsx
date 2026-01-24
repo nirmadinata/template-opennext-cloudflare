@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default async function WelcomePage() {
-    const res = await serverRpc.dashboardAuth.checkFirstTimeOnboard({});
-    if (!res.isFirstTime) {
+    const res = await serverRpc.dashboardAuth.checkIsFirstTimeUser();
+    if (!res.value) {
         redirect("/auth/login");
     }
 

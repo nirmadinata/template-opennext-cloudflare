@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { users } from "@/integrations/db";
 import { base } from "@/integrations/rpc";
 import {
@@ -12,12 +14,16 @@ const domain = base
     .use(initAuthenticationMiddleware)
     .use(initStorageMiddleware);
 
-export const checkFirstTimeOnboard = domain.handler(async function ({
-    context: { db },
-}) {
-    const total = await db.$count(users);
+export const checkIsFirstTimeUser = domain
+    .output(
+        z.object({
+            value: z.boolean(),
+        })
+    )
+    .handler(async function ({ context: { db } }) {
+        const total = await db.$count(users);
 
-    return {
-        isFirstTime: total === 0,
-    };
-});
+        return {
+            value: total === 0,
+        };
+    });
