@@ -4,14 +4,13 @@ import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { forgotPasswordFormSchema } from "../components/form-schemas";
 
 export function useForgotPasswordForm() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const form = useForm<z.infer<typeof forgotPasswordFormSchema>>({
+    const form = useForm({
         resolver: zodResolver(forgotPasswordFormSchema),
         defaultValues: {
             email: "",

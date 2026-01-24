@@ -103,11 +103,14 @@ Global providers in `components/molecules/client-provider.tsx`:
 
 Two environments: `local` and `production`
 
+- Recommended runtime: Bun v1.3+ (required). Node.js 20+ may still be useful for some tooling, but Bun is the primary runtime for development and scripts.
 - Set `NEXTJS_ENV=local` or `NEXTJS_ENV=production`
 - Each has distinct bindings in `wrangler.jsonc`
 - Local uses remote=false for KV/D1, remote=true for R2
 
 ### Key Commands
+
+Use Bun to run the project's scripts defined in `package.json`.
 
 ```bash
 # Development

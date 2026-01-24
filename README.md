@@ -282,3 +282,9 @@ features/<feature>/
 ## License
 
 MIT
+
+## Developer docs
+
+- **Copilot instructions**: see `.github/copilot-instructions.md` for repository-wide developer guidance and patterns.
+- **Feature agent notes**: each feature has an `AGENTS.md` with feature-specific instructions and AI helpers (see `features/*/AGENTS.md`).
+- **Per-folder docs**: consult `components/AGENTS.md`, `integrations/AGENTS.md`, `configs/AGENTS.md`, and `hooks/AGENTS.md` for detailed conventions used in those areas.

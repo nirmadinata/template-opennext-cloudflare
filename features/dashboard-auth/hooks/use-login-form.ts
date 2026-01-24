@@ -4,14 +4,13 @@ import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { loginFormSchema } from "../components/form-schemas";
 
 export function useLoginForm() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const form = useForm<z.infer<typeof loginFormSchema>>({
+    const form = useForm({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
             email: "",
