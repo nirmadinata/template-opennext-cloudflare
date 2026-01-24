@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+
 import { z } from "zod";
 
 import { users } from "@/integrations/db";
@@ -27,3 +29,17 @@ export const checkIsFirstTimeUser = domain
             value: total === 0,
         };
     });
+
+export const getAuthSession = domain.handler(async function ({
+    context: { auth },
+}) {
+    const header = await headers();
+    const session = await auth.api.getSession({
+        headers: header,
+    });
+
+    return {
+        session: session?.session,
+        user: session?.user,
+    };
+});
