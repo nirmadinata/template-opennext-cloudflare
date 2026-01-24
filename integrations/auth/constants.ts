@@ -10,5 +10,4 @@ export const ROLE_ENUM = {
     ADMIN: "admin",
 } as const;
 
-export const LIST_ROLES = Object.values(ROLE_ENUM);
 export const DEFAULT_CREATED_ROLE = ROLE_ENUM.ADMIN;

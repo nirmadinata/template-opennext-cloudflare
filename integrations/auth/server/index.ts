@@ -7,9 +7,12 @@ import { admin, openAPI } from "better-auth/plugins";
 import {
     APP_NAME,
     APP_PATH,
+    DEFAULT_CREATED_ROLE,
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
+    ROLE_ENUM,
 } from "../constants";
+import { ac, ROLES } from "@/integrations/auth/roles";
 import { COLUMN_ALIASES, TABLE_ALIASES } from "@/integrations/db/constants";
 import { getDB } from "@/integrations/db/server";
 import { getKV } from "@/integrations/kv/server";
@@ -127,6 +130,14 @@ function createAuth(env: CloudflareEnv) {
              * Admin Plugin
              */
             admin({
+                roles: ROLES,
+                defaultRole: DEFAULT_CREATED_ROLE,
+                ac: ac,
+                adminRoles: [
+                    ROLE_ENUM.SYSTEM,
+                    ROLE_ENUM.SUPERADMIN,
+                    ROLE_ENUM.ADMIN,
+                ],
                 schema: {
                     session: {
                         modelName: TABLE_ALIASES.SESSIONS,

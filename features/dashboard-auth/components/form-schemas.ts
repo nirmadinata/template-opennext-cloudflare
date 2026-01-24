@@ -19,13 +19,13 @@ export const forgotPasswordFormSchema = z.object({
 export const resetPasswordFormSchema = z
     .object({
         password: z
-            .string()
+            .string("Password is required")
             .min(
                 constants.PASSWORD_MIN_LENGTH,
                 `Password must be at least ${constants.PASSWORD_MIN_LENGTH} characters long`
             ),
 
-        passwordConfirm: z.string(),
+        passwordConfirm: z.string("Please confirm your password"),
     })
     .refine((data) => data.password === data.passwordConfirm, {
         message: "Passwords do not match",
@@ -35,18 +35,18 @@ export const welcomeFormSchema = z
     .object({
         email: z.email("Invalid email address"),
         username: z
-            .string()
+            .string("Username is required")
             .min(
                 constants.USERNAME_MIN_LENGTH,
                 `Username must be at least ${constants.USERNAME_MIN_LENGTH} characters long`
             ),
         password: z
-            .string()
+            .string("Password is required")
             .min(
                 constants.PASSWORD_MIN_LENGTH,
                 `Password must be at least ${constants.PASSWORD_MIN_LENGTH} characters long`
             ),
-        passwordConfirm: z.string(),
+        passwordConfirm: z.string("Please confirm your password"),
     })
     .refine((data) => data.password === data.passwordConfirm, {
         message: "Passwords do not match",
