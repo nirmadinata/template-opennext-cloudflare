@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils";
 type LoginFormProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
-    const { form, isLoading, onSubmitLoginByEmail } = useLoginForm(); // Use hook
+    const { form, isLoading, onSubmitLoginByEmail, onSubmitLoginByGoogle } =
+        useLoginForm(); // Use hook
 
     return (
         <div className={cn("grid gap-6", className)} {...props}>
@@ -101,7 +102,10 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 </div>
             </div>
 
-            <OAuthButtons isLoading={isLoading} />
+            <OAuthButtons
+                googleOnClick={onSubmitLoginByGoogle}
+                isLoading={isLoading}
+            />
         </div>
     );
 }

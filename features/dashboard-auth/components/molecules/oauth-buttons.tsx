@@ -2,15 +2,17 @@ import { Button } from "@/components/ui/button";
 
 interface OAuthButtonsProps {
     isLoading?: boolean;
+    googleOnClick?: () => void;
 }
 
-export function OAuthButtons({ isLoading }: OAuthButtonsProps) {
+export function OAuthButtons({ isLoading, googleOnClick }: OAuthButtonsProps) {
     return (
         <Button
             variant="outline"
             type="button"
             disabled={isLoading}
             className="w-full"
+            onClick={googleOnClick}
         >
             {isLoading ? (
                 <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
