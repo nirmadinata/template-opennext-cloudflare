@@ -8,154 +8,198 @@ Public-facing home page for visitors. Displays hero, features, testimonials, sta
 
 ```
 visitor-home/
-├── utils/               # Feature-specific utilities
-├── hooks/               # Feature-specific React hooks (feature-only logic)
+├── AGENTS.md            # This documentation
+├── index.ts             # Public exports (components, server)
 ├── components/          # Atomic design components
-│   ├── atoms/           # Basic elements (Heading, Text, Icon)
-│   ├── molecules/       # Groups (FeatureCard, TestimonialCarousel, FileUploadCard, etc.)
-│   ├── organisms/       # Sections (HeroSection, StorageDemoSection, TestimonialsCarouselSection)
-│   └── templates/       # Full layouts (HomePageTemplate, ClientHomeContent)
-├── server/              # API layer
-│   ├── schemas.ts       # Zod schemas for type safety
-│   ├── mock-data.ts     # Mock data (replace with DB queries)
-│   ├── procedures.ts    # ORPC procedures (API endpoints)
-│   └── index.ts         # Server exports (exports visitorHomeRoutes)
-└── index.ts             # Public exports
+│   ├── index.ts         # All component exports
+│   ├── atoms/           # Basic elements
+│   │   ├── heading.tsx
+│   │   ├── text.tsx
+│   │   └── icon.tsx
+│   ├── molecules/       # Simple component groups
+│   │   ├── feature-card.tsx
+│   │   ├── testimonial-card.tsx
+│   │   ├── testimonial-carousel.tsx  # Client component
+│   │   ├── stat-card.tsx             # Client component (animated)
+│   │   ├── file-upload-card.tsx      # Client component (R2 upload)
+│   │   └── text-storage-card.tsx     # Client component (R2 text storage)
+│   ├── organisms/       # Feature sections
+│   │   ├── hero-section.tsx
+│   │   ├── features-section.tsx
+│   │   ├── testimonials-section.tsx
+│   │   ├── testimonials-carousel-section.tsx  # Client component
+│   │   ├── stats-section.tsx
+│   │   └── storage-demo-section.tsx
+│   └── templates/       # Full page layouts
+│       ├── home-page-template.tsx     # SSR template
+│       └── client-home-content.tsx    # CSR template
+└── server/              # API layer
+    ├── index.ts         # Server exports (visitorHomeRoutes)
+    ├── schemas.ts       # Zod schemas with Type exports
+    ├── mock-data.ts     # Mock data (replace with DB queries)
+    └── procedures.ts    # ORPC procedures
 ```
 
 ## Key Components
 
-### StorageDemoSection
+### Templates
 
-Demonstrates the integration with the `storage` feature. It allows visitors to:
+#### `HomePageTemplate` (SSR)
 
-- Upload files using client-side presigned URLs (via `FileUploadCard` molecule)
-- Store text/JSON data using server-side R2 bindings (via `TextStorageCard` molecule)
+Server-rendered home page template used by `app/page.tsx`:
 
-### TestimonialsCarouselSection
+```tsx
+// app/page.tsx
+import { HomePageTemplate } from "@/features/visitor-home/components";
+import { serverRpc } from "@/integrations/rpc/server";
 
-A dynamic carousel of testimonials, built using the `TestimonialCarousel` molecule which manages the swiping/navigating logic.
+export default async function Page() {
+    const data = await serverRpc.home.getHomePageData();
+    return <HomePageTemplate data={data} />;
+}
+```
 
-## Key Patterns
+#### `ClientHomeContent` (CSR)
 
-### Using Global Hooks
+Client-rendered alternative demonstrating TanStack Query:
+
+```tsx
+// app/client-example/page.tsx
+import { ClientHomeContent } from "@/features/visitor-home/components";
+
+export default function Page() {
+    return <ClientHomeContent />;
+}
+```
+
+### Storage Demo Components
+
+#### `StorageDemoSection`
+
+Demonstrates R2 storage integration with two cards:
+
+1. **FileUploadCard** (client component):
+   - Uses `useUploadWithProgress` hook from `@/hooks`
+   - Provides progress tracking and cancel functionality
+   - Validates file type and size
+
+2. **TextStorageCard** (client component):
+   - Demonstrates server-side JSON/text storage pattern
+   - Uses RPC to store/retrieve data
+
+### Interactive Components
+
+Client components (marked with `"use client"`):
+
+| Component                     | Purpose                                |
+| ----------------------------- | -------------------------------------- |
+| `StatCard`                    | Animated counting on viewport entry    |
+| `TestimonialCarousel`         | Auto-play carousel with keyboard nav   |
+| `TestimonialsCarouselSection` | Carousel-based testimonials section    |
+| `FileUploadCard`              | File upload to R2 via presigned URLs   |
+| `TextStorageCard`             | Demo for server-side text storage      |
+| `ClientHomeContent`           | Full client-side page with React Query |
+
+## Schema Organization
+
+All schemas in `server/schemas.ts` with `Type` suffix exports:
+
+```typescript
+import {
+    HeroSectionSchema,
+    HeroSectionType,
+    FeatureItemSchema,
+    FeatureItemType,
+    HomePageDataSchema,
+    HomePageDataType,
+} from "@/features/visitor-home/server/schemas";
+```
+
+### Available Schemas
+
+| Schema                      | Description                 |
+| --------------------------- | --------------------------- |
+| `HeroSectionSchema`         | Hero section data           |
+| `FeatureItemSchema`         | Single feature item         |
+| `FeaturesSectionSchema`     | Features section with items |
+| `TestimonialItemSchema`     | Single testimonial          |
+| `TestimonialsSectionSchema` | Testimonials section        |
+| `StatItemSchema`            | Single stat item            |
+| `StatsSectionSchema`        | Stats section with items    |
+| `HomePageDataSchema`        | Complete home page data     |
+
+## Available RPC Procedures
+
+| Procedure                | Description                      |
+| ------------------------ | -------------------------------- |
+| `getHeroSection`         | Returns hero section data        |
+| `getFeaturesSection`     | Returns features section data    |
+| `getTestimonialsSection` | Returns testimonials section     |
+| `getStatsSection`        | Returns stats section data       |
+| `getHomePageData`        | Returns all sections in one call |
+
+### Usage
+
+```typescript
+// Server-side (SSR)
+import { serverRpc } from "@/integrations/rpc/server";
+const data = await serverRpc.home.getHomePageData();
+
+// Client-side (CSR)
+import { orpc } from "@/integrations/rpc/client";
+const { data } = useQuery(orpc.home.getHomePageData.queryOptions());
+```
+
+## Component Hierarchy
+
+- **Atoms**: Pure presentational, no business logic (`Heading`, `Text`, `Icon`)
+- **Molecules**: Combine atoms, receive single data object (some are client components)
+- **Organisms**: Feature-specific sections, may be client components for interactivity
+- **Templates**: Compose organisms into page layouts
+
+## Using Global Hooks
 
 Reusable hooks like `useUpload` and `useUploadWithProgress` are in the global `hooks/` folder:
 
 ```tsx
 import { useUploadWithProgress } from "@/hooks";
 
-function MyComponent() {
+function FileUploadCard() {
     const { upload, cancel, reset, isUploading, progress, uploadedKey, error } =
         useUploadWithProgress({
-            path: "uploads/avatars",
-            onProgress: (p) => console.log(`${p.percentage}%`),
-            onSuccess: (key) => console.log(`Uploaded: ${key}`),
+            path: "uploads/demo",
+            onSuccess: () => console.log("Upload complete"),
         });
-
-    return (
-        <div>
-            <button onClick={() => upload(file)} disabled={isUploading}>
-                {isUploading ? `${progress.percentage}%` : "Upload"}
-            </button>
-            {isUploading && <button onClick={cancel}>Cancel</button>}
-        </div>
-    );
+    // ...
 }
 ```
 
-### Feature-Specific Hooks
+## Adding a New Section
 
-Feature-specific hooks (in `features/<feature>/hooks/`) should only contain logic that is:
+1. **Add schema** in `server/schemas.ts` with `Type` suffix
+2. **Add mock data** in `server/mock-data.ts`
+3. **Create procedure** in `server/procedures.ts`
+4. **Create components** following atomic design:
+   - Atoms for basic elements
+   - Molecule for section card/item
+   - Organism for complete section
+5. **Export** from respective index files
+6. **Add to template** in `templates/home-page-template.tsx`
 
-- Unique to the feature's business domain
-- Not reusable across other features
-- Tightly coupled to feature-specific data or components
-
-### Type Naming Convention
-
-All types exported from schemas use the `Type` suffix:
-
-- `HeroSectionType`, `FeatureItemType`, `StatItemType`, etc.
-- This avoids naming conflicts with components
-
-### Adding a New Section
-
-1. Create schema in `server/schemas.ts` with `Type` suffix for exports
-2. Add mock data in `server/mock-data.ts`
-3. Create procedure in `server/procedures.ts` using `publicProcedure` from `@/integrations/rpc`
-4. Export from `server/index.ts`
-5. Register router in `integrations/rpc/router.ts`
-6. Create components following atomic design
-
-### Component Hierarchy
-
-- **Atoms**: Pure presentational, no business logic
-- **Molecules**: Combine atoms, receive single data object (some are client components)
-- **Organisms**: Feature-specific sections, may be client components for interactivity
-- **Templates**: Compose organisms into page layouts
-
-### Interactive Components
-
-Some molecules/organisms are client components (`"use client"`):
-
-- `StatCard` - Animated counting on viewport entry
-- `TestimonialCarousel` - Auto-play carousel with keyboard navigation
-- `TestimonialsCarouselSection` - Carousel-based testimonials section
-- `ClientHomeContent` - Full client-side page with React Query
-- `FileUploadCard` - Client-side file upload to R2 via presigned URLs
-- `TextStorageCard` - Demo for server-side text storage
-
-### R2 Storage Demo Components
-
-The `StorageDemoSection` organism demonstrates R2 storage integration:
-
-1. **FileUploadCard** (client component):
-    - Uses `useUploadWithProgress` hook from `../../hooks`
-    - Provides progress tracking and cancel functionality
-    - Validates file type and size using utilities from `@/integrations/r2/client`
-
-2. **TextStorageCard** (client component):
-    - Demonstrates server-side JSON/text storage pattern
-    - Uses `R2_PATHS` constants for consistent key naming
-
-### API Pattern
-
-All procedures use ORPC with:
-
-- `.output()` for response schema validation
-- `.handler()` for business logic
-
-## Data Flow
+## Data Flow Patterns
 
 ### Server-Side Rendering (SSR)
 
-```tsx
-// app/page.tsx
-import { serverRpc } from "@/integrations/rpc/server";
-
-const data = await serverRpc.home.getHomePageData();
-return <HomePageTemplate data={data} />;
+```
+app/page.tsx → serverRpc.home.getHomePageData() → HomePageTemplate → Organisms
 ```
 
 ### Client-Side Rendering (CSR)
 
-```tsx
-// features/visitor-home/components/templates/client-home-content.tsx
-import { orpc } from "@/integrations/rpc/client";
-
-const { data, isLoading } = useQuery(orpc.home.getHomePageData.queryOptions());
+```
+app/client-example/page.tsx → ClientHomeContent → useQuery(orpc.home...) → Organisms
 ```
 
-Compare both approaches at:
-
+Compare both approaches:
 - SSR: `/` (main page)
-- CSR: `/client-example` (demonstrates React Query)
-
-## Extending
-
-To add real database integration:
-
-1. Import `getCFContext` from `@/integrations/cloudflare-context/server` and `getDB` from `@/integrations/db/server`
-2. Replace mock data with D1 queries in procedure handlers
-3. Add database schema in `integrations/db/schema.ts`
+- CSR: `/client-example`

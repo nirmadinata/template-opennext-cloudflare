@@ -1,4 +1,4 @@
-import { routes as dashboardAuth } from "@/features/dashboard-auth/server";
+import { dashboardAuthRoutes as dashboardAuth } from "@/features/dashboard-auth/server";
 import { storageRoutes as storage } from "@/features/storage/server";
 import { visitorHomeRoutes as home } from "@/features/visitor-home/server";
 

@@ -55,6 +55,15 @@ export function useLoginForm() {
                     requestSignUp: false,
                 });
             },
+            async onSuccess({ error }, ___) {
+                if (error) {
+                    console.error(`Error login: ${error.message}`);
+                    toast.error(`Error logging in`);
+                }
+            },
+            async onError(error) {
+                console.error(error);
+            },
         });
 
     const onSubmitLoginByEmail = form.handleSubmit((v) => loginByEmail(v));

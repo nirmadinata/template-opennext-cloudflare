@@ -94,7 +94,7 @@ function MyComponent() {
 
 ## Hook Options
 
-### Upload Hook Options
+### Common Upload Options
 
 Both `useUpload` and `useUploadWithProgress` share these options:
 
@@ -107,18 +107,37 @@ Both `useUpload` and `useUploadWithProgress` share these options:
 | `onError`        | `(error: Error) => void` | -                  | Callback when upload fails                     |
 | `invalidateKeys` | `string[]`               | `["storage"]`      | TanStack Query keys to invalidate on success   |
 
-`useUploadWithProgress` additionally supports:
+### Additional Options for `useUploadWithProgress`
 
 | Option       | Type                                 | Description                    |
 | ------------ | ------------------------------------ | ------------------------------ |
 | `onProgress` | `(progress: UploadProgress) => void` | Callback when progress changes |
 
+### Return Values
+
+#### `useUpload` returns:
+
+| Property      | Type                              | Description                   |
+| ------------- | --------------------------------- | ----------------------------- |
+| `upload`      | `(file: File) => Promise<string>` | Function to trigger upload    |
+| `isUploading` | `boolean`                         | Whether upload is in progress |
+| `uploadedKey` | `string \| null`                  | Key of last uploaded file     |
+| `error`       | `string \| null`                  | Error message if failed       |
+| `reset`       | `() => void`                      | Reset upload state            |
+
+#### `useUploadWithProgress` additionally returns:
+
+| Property   | Type             | Description             |
+| ---------- | ---------------- | ----------------------- |
+| `progress` | `UploadProgress` | Current upload progress |
+| `cancel`   | `() => void`     | Cancel current upload   |
+
 ### UploadProgress Type
 
 ```typescript
 interface UploadProgress {
-    loaded: number; // Bytes loaded so far
-    total: number; // Total bytes to upload
+    loaded: number;     // Bytes loaded so far
+    total: number;      // Total bytes to upload
     percentage: number; // Percentage complete (0-100)
 }
 ```
@@ -143,3 +162,81 @@ Keep hooks in feature folders (`features/<feature>/hooks/`) when:
 2. Add `"use client";` directive at the top (for client-side hooks)
 3. Export the hook and its types from `hooks/index.ts`
 4. Update this documentation with usage examples
+
+### Hook Template
+
+```typescript
+"use client";
+
+import { useState, useCallback } from "react";
+
+export interface UseMyHookOptions {
+    /** Option description */
+    option1?: string;
+    /** Callback when something happens */
+    onSuccess?: (result: string) => void;
+}
+
+export interface UseMyHookReturn {
+    /** Current state */
+    data: string | null;
+    /** Whether operation is in progress */
+    isLoading: boolean;
+    /** Trigger the operation */
+    execute: () => Promise<void>;
+    /** Reset state */
+    reset: () => void;
+}
+
+/**
+ * useMyHook - Description of what this hook does
+ *
+ * @example
+ * ```tsx
+ * const { data, isLoading, execute } = useMyHook({
+ *     option1: "value",
+ *     onSuccess: (result) => console.log(result),
+ * });
+ * ```
+ */
+export function useMyHook(options: UseMyHookOptions = {}): UseMyHookReturn {
+    const { option1, onSuccess } = options;
+    const [data, setData] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const execute = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            // Do something
+            const result = "result";
+            setData(result);
+            onSuccess?.(result);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [option1, onSuccess]);
+
+    const reset = useCallback(() => {
+        setData(null);
+        setIsLoading(false);
+    }, []);
+
+    return { data, isLoading, execute, reset };
+}
+```
+
+## Integration with R2 Storage
+
+The upload hooks integrate with the R2 storage system:
+
+1. **Generate presigned URL** via RPC (`orpc.storage.generateUploadUrl`)
+2. **Upload to presigned URL** via `uploadToPresignedUrl` from `@/integrations/r2/client`
+3. **Use R2 path constants** from `@/integrations/r2` for consistent naming
+
+```typescript
+import { R2_PATHS, buildR2Key } from "@/integrations/r2";
+
+// Build consistent keys
+const key = buildR2Key(R2_PATHS.USER_UPLOADS, userId, "avatar.jpg");
+// Result: "uploads/users/{userId}/avatar.jpg"
+```

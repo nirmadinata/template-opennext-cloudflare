@@ -10,12 +10,14 @@ Reusable UI components shared across all features. These are not feature-specifi
 components/
 ├── AGENTS.md           # This documentation
 ├── molecules/          # Composite client components (providers, handlers)
-│   ├── client-provider.tsx
+│   ├── client-provider.tsx    # Root provider for client-side state
 │   └── locale-change-handler.tsx
 └── ui/                 # UI primitives (Radix-based)
     ├── button.tsx
     ├── input.tsx
     ├── dialog.tsx
+    ├── form.tsx
+    ├── card.tsx
     └── ... (50+ components)
 ```
 
@@ -73,8 +75,7 @@ export default function RootLayout({ children }) {
 
 Includes:
 
-- TanStack Query provider
-- TanStack Devtools
+- TanStack Query provider with devtools
 - Locale change handler
 
 #### `LocaleChangeHandler`
@@ -102,25 +103,31 @@ const myComponentVariants = cva("base-classes", {
             default: "default-classes",
             outline: "outline-classes",
         },
+        size: {
+            sm: "small-classes",
+            md: "medium-classes",
+            lg: "large-classes",
+        },
     },
     defaultVariants: {
         variant: "default",
+        size: "md",
     },
 });
 
 export interface MyComponentProps
-    extends
-        React.HTMLAttributes<HTMLDivElement>,
+    extends React.HTMLAttributes<HTMLDivElement>,
         VariantProps<typeof myComponentVariants> {}
 
 export function MyComponent({
     className,
     variant,
+    size,
     ...props
 }: MyComponentProps) {
     return (
         <div
-            className={cn(myComponentVariants({ variant }), className)}
+            className={cn(myComponentVariants({ variant, size }), className)}
             {...props}
         />
     );
@@ -133,8 +140,130 @@ export function MyComponent({
 2. Add `"use client";` if it uses React hooks
 3. Combine UI primitives with specific logic
 
+```tsx
+// components/molecules/confirmation-dialog.tsx
+"use client";
+
+import { useState } from "react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
+interface ConfirmationDialogProps {
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+}
+
+export function ConfirmationDialog({
+    title,
+    message,
+    onConfirm,
+    onCancel,
+}: ConfirmationDialogProps) {
+    return (
+        <Dialog open>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{title}</DialogTitle>
+                </DialogHeader>
+                <p>{message}</p>
+                <DialogFooter>
+                    <Button variant="outline" onClick={onCancel}>
+                        Cancel
+                    </Button>
+                    <Button onClick={onConfirm}>Confirm</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+```
+
 ## Guidelines
 
 - **UI components**: Pure, stateless, no business logic
 - **Molecules**: Can have state, but should remain generic
 - **Feature-specific components**: Go in `features/<feature>/components/`
+- **Use `cn()` utility**: For merging Tailwind classes with conditionals
+- **Forward refs when needed**: For components that need ref access
+
+## Available UI Components
+
+Key components available in `components/ui/`:
+
+| Component       | Description                          |
+| --------------- | ------------------------------------ |
+| `Button`        | Primary action button with variants  |
+| `Input`         | Text input field                     |
+| `Form`          | Form primitives with react-hook-form |
+| `Dialog`        | Modal dialog                         |
+| `Card`          | Content container                    |
+| `Select`        | Dropdown select                      |
+| `Table`         | Data table components                |
+| `Tabs`          | Tabbed navigation                    |
+| `Skeleton`      | Loading placeholder                  |
+| `Spinner`       | Loading indicator                    |
+| `Empty`         | Empty state component                |
+| `Sonner`        | Toast notifications (via sonner)     |
+| `Sidebar`       | Navigation sidebar                   |
+| `Sheet`         | Slide-out panel                      |
+| `Dropdown Menu` | Context/dropdown menus               |
+
+## Form Integration
+
+Forms use React Hook Form with Zod validation:
+
+```tsx
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const schema = z.object({
+    email: z.email("Invalid email"),
+});
+
+function MyForm() {
+    const form = useForm({
+        resolver: zodResolver(schema),
+        defaultValues: { email: "" },
+    });
+
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <Button type="submit">Submit</Button>
+            </form>
+        </Form>
+    );
+}
+```

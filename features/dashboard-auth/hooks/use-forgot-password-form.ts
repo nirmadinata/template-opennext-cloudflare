@@ -5,7 +5,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { forgotPasswordFormSchema } from "../components/form-schemas";
+import { forgotPasswordFormSchema } from "@/features/dashboard-auth/components/form-schemas";
 
 export function useForgotPasswordForm() {
     const [isLoading, setIsLoading] = useState<boolean>(false);

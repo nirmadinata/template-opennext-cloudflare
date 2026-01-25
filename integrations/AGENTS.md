@@ -12,13 +12,15 @@ integrations/
 ├── auth/                  # Authentication (better-auth)
 │   ├── client/            # Client-side auth helpers
 │   ├── server/            # Server-side auth configuration
-│   └── constants.ts       # Role enums, auth constants
+│   ├── constants.ts       # Auth constants (app name, paths)
+│   └── roles.ts           # Role definitions
 ├── cloudflare-context/    # Cloudflare bindings access
 │   ├── index.ts           # Re-exports
 │   └── server/            # getCFContext, getCFContextSync
 ├── db/                    # Database (Drizzle + D1)
 │   ├── server/            # getDB singleton
 │   ├── schema.ts          # Drizzle schema definitions
+│   ├── constants.ts       # Table/column aliases, role lists
 │   ├── migrations/        # Generated SQL migrations
 │   └── drizzle.config.ts  # Drizzle configuration
 ├── email/                 # Email sending (Plunk)
@@ -31,13 +33,14 @@ integrations/
 ├── r2/                    # Cloudflare R2 storage
 │   ├── client/            # Client-side upload utilities
 │   ├── server/            # S3 client, R2 binding operations
-│   ├── constants.ts       # R2_PATHS, ALLOWED_MIME_TYPES
+│   ├── constants.ts       # R2_PATHS, ALLOWED_MIME_TYPES, MAX_FILE_SIZES
 │   └── types.ts           # R2 interfaces
 └── rpc/                   # ORPC (type-safe RPC)
     ├── client/            # Client-side orpc instance
     ├── server/            # Server-side serverRpc instance
     ├── router.ts          # Main router composition
-    ├── base.ts            # Base procedures (public, auth, admin)
+    ├── base.ts            # Base procedures, middlewares, error definitions
+    ├── types.ts           # Context types
     └── handler.ts         # Next.js route handler
 ```
 
@@ -157,6 +160,54 @@ const locale = await getUserLocale(); // "en" | "ar"
 await setUserLocale("ar");
 ```
 
+## RPC Architecture
+
+### Base Procedures and Middlewares
+
+The `base.ts` file defines:
+
+1. **Error definitions**: Standard error types (INTERNAL_SERVER_ERROR, BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, INPUT_VALIDATION_FAILED, OUTPUT_VALIDATION_FAILED)
+
+2. **Middlewares**:
+   - `injectHeadersMiddleware`: Adds request headers to context
+   - `injectCFContextMiddleware`: Adds Cloudflare context
+   - `initStorageMiddleware`: Initializes KV and DB clients
+   - `initAuthenticationMiddleware`: Initializes auth client
+   - `ensureAdminMiddleware`: Validates admin session
+
+3. **Usage in procedures**:
+
+```typescript
+import { base } from "@/integrations/rpc";
+import { initStorageMiddleware } from "@/integrations/rpc/base";
+
+const domain = base.use(initStorageMiddleware);
+
+export const myProcedure = domain
+    .input(MyInputSchema)
+    .output(MyOutputSchema)
+    .handler(async ({ input, context }) => {
+        // context.db, context.kv are available
+        return result;
+    });
+```
+
+### Router Composition
+
+All feature routers are composed in `router.ts`:
+
+```typescript
+import { dashboardAuthRoutes } from "@/features/dashboard-auth/server";
+import { storageRoutes } from "@/features/storage/server";
+import { visitorHomeRoutes } from "@/features/visitor-home/server";
+
+export const appRouter = {
+    home: visitorHomeRoutes,
+    storage: storageRoutes,
+    dashboardAuth: dashboardAuthRoutes,
+};
+```
+
 ## Adding New Integrations
 
 ### Structure Pattern
@@ -185,7 +236,6 @@ integrations/<name>/
 ```typescript
 // integrations/sms/server/index.ts
 import "server-only";
-import { getCFContext } from "@/integrations/cloudflare-context/server";
 
 let smsClient: SMSClient | null = null;
 
@@ -217,3 +267,4 @@ export type { SMSOptions, SMSResult } from "./types";
 2. **Don't create multiple DB instances** - always use `getDB(env)`
 3. **Use correct RPC imports** - `server` for server components, `client` for client components
 4. **Migrations require env vars** - ensure `.env.local` exists with Cloudflare credentials
+5. **Schema changes require migration** - run `bun run db:generate` after modifying schema

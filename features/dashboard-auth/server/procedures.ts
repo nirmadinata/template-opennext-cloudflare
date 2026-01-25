@@ -1,7 +1,8 @@
-import { z } from "zod";
-
+import {
+    createFirstUserInputSchema,
+    isFirstUserResponseSchema,
+} from "./schemas";
 import { ROLE_ENUM } from "@/configs/constants";
-import { constants } from "@/features/dashboard-auth/lib/constants";
 import { users } from "@/integrations/db";
 import { base } from "@/integrations/rpc";
 import {
@@ -12,18 +13,19 @@ import {
 
 const domain = base
     /**
-     * register middlewares
+     * Register middlewares for dashboard auth procedures
      */
     .use(injectHeadersMiddleware)
     .use(initAuthenticationMiddleware)
     .use(initStorageMiddleware);
 
+/**
+ * Check if this is the first user setup
+ *
+ * Returns true if no users exist in the database.
+ */
 export const checkIsFirstTimeUser = domain
-    .output(
-        z.object({
-            value: z.boolean(),
-        })
-    )
+    .output(isFirstUserResponseSchema)
     .handler(async function ({ context: { db } }) {
         const total = await db.$count(users);
 
@@ -32,6 +34,11 @@ export const checkIsFirstTimeUser = domain
         };
     });
 
+/**
+ * Get current auth session
+ *
+ * Returns the current user's session and user data if authenticated.
+ */
 export const getAuthSession = domain.handler(async function ({
     context: { auth, headers },
 }) {
@@ -45,20 +52,14 @@ export const getAuthSession = domain.handler(async function ({
     };
 });
 
+/**
+ * Create the first admin user
+ *
+ * Creates a superadmin user during initial setup.
+ * Should only be called when no users exist.
+ */
 export const createFirstUser = domain
-    .input(
-        z.object({
-            email: z.email(),
-            username: z
-                .string()
-                .min(constants.USERNAME_MIN_LENGTH)
-                .max(constants.USERNAME_MAX_LENGTH),
-            password: z
-                .string()
-                .min(constants.PASSWORD_MIN_LENGTH)
-                .max(constants.PASSWORD_MAX_LENGTH),
-        })
-    )
+    .input(createFirstUserInputSchema)
     .handler(async function ({
         context: { auth },
         input: { email, password, username: name },
