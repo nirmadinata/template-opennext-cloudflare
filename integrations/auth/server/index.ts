@@ -1,7 +1,7 @@
 import "server-only";
 
-import { betterAuth } from "better-auth";
 import { DB, drizzleAdapter } from "better-auth/adapters/drizzle";
+import { betterAuth } from "better-auth/minimal";
 import { admin, openAPI } from "better-auth/plugins";
 
 import { DEFAULT_CREATED_ROLE, ROLE_ENUM } from "@/configs/constants";
