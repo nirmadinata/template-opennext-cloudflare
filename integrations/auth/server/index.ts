@@ -1,17 +1,16 @@
 import "server-only";
 
+import { betterAuth } from "better-auth";
 import { DB, drizzleAdapter } from "better-auth/adapters/drizzle";
-import { betterAuth } from "better-auth/minimal";
 import { admin, openAPI } from "better-auth/plugins";
 
+import { DEFAULT_CREATED_ROLE, ROLE_ENUM } from "@/configs/constants";
 import {
     APP_NAME,
     APP_PATH,
-    DEFAULT_CREATED_ROLE,
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
-    ROLE_ENUM,
-} from "../constants";
+} from "@/integrations/auth/constants";
 import { ac, ROLES } from "@/integrations/auth/roles";
 import { COLUMN_ALIASES, TABLE_ALIASES } from "@/integrations/db/constants";
 import { getDB } from "@/integrations/db/server";
@@ -20,7 +19,6 @@ import { getKV } from "@/integrations/kv/server";
 function createAdapter<D extends DB>(db: D) {
     return drizzleAdapter(db, {
         provider: "sqlite",
-        usePlural: true,
     });
 }
 

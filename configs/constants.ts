@@ -23,3 +23,11 @@ export const LOCALE_TIMEZONE = {
     [LOCALES.EN]: "Asia/Jakarta",
     [LOCALES.AR]: "Asia/Riyadh",
 } satisfies Record<Locale, Timezone>;
+
+export const ROLE_ENUM = {
+    SYSTEM: "system",
+    SUPERADMIN: "superadmin",
+    ADMIN: "admin",
+} as const;
+
+export const DEFAULT_CREATED_ROLE = ROLE_ENUM.ADMIN;

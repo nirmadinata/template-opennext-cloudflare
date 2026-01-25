@@ -1,3 +1,5 @@
+import { ROLE_ENUM } from "@/configs/constants";
+
 /**
  * table names
  */
@@ -167,8 +169,9 @@ export const USER_ROLE_ENUM = {
 } as const;
 
 export const USER_ROLE_LIST = [
-    USER_ROLE_ENUM.ADMIN,
-    USER_ROLE_ENUM.USER,
+    ROLE_ENUM.SYSTEM,
+    ROLE_ENUM.SUPERADMIN,
+    ROLE_ENUM.ADMIN,
 ] as const;
 
-export const USER_ROLE_DEFAULT = USER_ROLE_ENUM.ADMIN;
+export const USER_ROLE_DEFAULT = ROLE_ENUM.ADMIN;

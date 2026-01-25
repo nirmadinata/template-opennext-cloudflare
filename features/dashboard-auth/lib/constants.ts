@@ -1,4 +1,6 @@
 export const constants = {
     PASSWORD_MIN_LENGTH: 8,
+    PASSWORD_MAX_LENGTH: 64,
     USERNAME_MIN_LENGTH: 6,
+    USERNAME_MAX_LENGTH: 30,
 };

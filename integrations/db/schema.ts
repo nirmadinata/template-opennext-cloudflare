@@ -18,12 +18,12 @@ import {
 const CURRENT_TIMESTAMP = sql`CURRENT_TIMESTAMP`;
 
 const COMMON_COLUMNS = {
-    createdAt: int(COLUMN_ALIASES.COMMON_COLUMNS.CREATED_AT, {
+    created_at: int(COLUMN_ALIASES.COMMON_COLUMNS.CREATED_AT, {
         mode: "timestamp_ms",
     })
         .notNull()
         .default(CURRENT_TIMESTAMP),
-    updatedAt: int(COLUMN_ALIASES.COMMON_COLUMNS.UPDATED_AT, {
+    updated_at: int(COLUMN_ALIASES.COMMON_COLUMNS.UPDATED_AT, {
         mode: "timestamp_ms",
     })
         .notNull()
@@ -32,12 +32,12 @@ const COMMON_COLUMNS = {
 } as const;
 
 const COMMON_AUTHORED_COLUMNS = {
-    createdBy: text(COLUMN_ALIASES.COMMON_COLUMNS.CREATED_BY)
+    created_by: text(COLUMN_ALIASES.COMMON_COLUMNS.CREATED_BY)
         .notNull()
         .references(() => users.id, {
             onDelete: "cascade",
         }),
-    updatedBy: text(COLUMN_ALIASES.COMMON_COLUMNS.UPDATED_BY)
+    updated_by: text(COLUMN_ALIASES.COMMON_COLUMNS.UPDATED_BY)
         .notNull()
         .references(() => users.id, {
             onDelete: "cascade",
@@ -67,7 +67,7 @@ export const users = sqliteTable(
         /**
          * is email verified
          */
-        emailVerified: int(COLUMN_ALIASES.USERS.EMAIL_VERIFIED, {
+        email_verified: int(COLUMN_ALIASES.USERS.EMAIL_VERIFIED, {
             mode: "boolean",
         }).default(false),
 
@@ -88,8 +88,8 @@ export const users = sqliteTable(
             mode: "boolean",
         }).default(false),
 
-        banReason: text(COLUMN_ALIASES.USERS.BAN_REASON),
-        banExpires: int(COLUMN_ALIASES.USERS.BAN_EXPIRES, {
+        ban_reason: text(COLUMN_ALIASES.USERS.BAN_REASON),
+        ban_expires: int(COLUMN_ALIASES.USERS.BAN_EXPIRES, {
             mode: "timestamp_ms",
         }),
     },
@@ -121,20 +121,20 @@ export const sessions = sqliteTable(
         /**
          * references the user table (id)
          */
-        userId: text(COLUMN_ALIASES.SESSIONS.USER_ID)
+        user_id: text(COLUMN_ALIASES.SESSIONS.USER_ID)
             .notNull()
             .references(() => users.id, {
                 onDelete: "cascade",
             }),
 
         token: text(COLUMN_ALIASES.SESSIONS.TOKEN).notNull().unique(),
-        expiresAt: int(COLUMN_ALIASES.SESSIONS.EXPIRES_AT, {
+        expires_at: int(COLUMN_ALIASES.SESSIONS.EXPIRES_AT, {
             mode: "timestamp_ms",
         }).notNull(),
 
-        ipAddress: text(COLUMN_ALIASES.SESSIONS.IP_ADDRESS),
-        userAgent: text(COLUMN_ALIASES.SESSIONS.USER_AGENT),
-        impersonatedBy: text(COLUMN_ALIASES.SESSIONS.IMPERSONATED_BY),
+        ip_address: text(COLUMN_ALIASES.SESSIONS.IP_ADDRESS),
+        user_agent: text(COLUMN_ALIASES.SESSIONS.USER_AGENT),
+        impersonated_by: text(COLUMN_ALIASES.SESSIONS.IMPERSONATED_BY),
     },
 
     (table) => [
@@ -148,7 +148,7 @@ export const sessions = sqliteTable(
         /**
          * indexes
          */
-        index(INDEXES_ENUM.SESSION_USER_ID).on(table.userId),
+        index(INDEXES_ENUM.SESSION_USER_ID).on(table.user_id),
         index(INDEXES_ENUM.SESSION_TOKEN).on(table.token),
     ]
 );
@@ -166,30 +166,30 @@ export const accounts = sqliteTable(
         /**
          * references the user table (id)
          */
-        userId: text(COLUMN_ALIASES.ACCOUNTS.USER_ID)
+        user_id: text(COLUMN_ALIASES.ACCOUNTS.USER_ID)
             .notNull()
             .references(() => users.id, {
                 onDelete: "cascade",
             }),
 
-        accountId: text(COLUMN_ALIASES.ACCOUNTS.ACCOUNT_ID).notNull(),
-        providerId: text(COLUMN_ALIASES.ACCOUNTS.PROVIDER_ID).notNull(),
-        accessToken: text(COLUMN_ALIASES.ACCOUNTS.ACCESS_TOKEN),
-        refreshToken: text(COLUMN_ALIASES.ACCOUNTS.REFRESH_TOKEN),
-        accessTokenExpiresAt: int(
+        account_id: text(COLUMN_ALIASES.ACCOUNTS.ACCOUNT_ID).notNull(),
+        provider_id: text(COLUMN_ALIASES.ACCOUNTS.PROVIDER_ID).notNull(),
+        access_token: text(COLUMN_ALIASES.ACCOUNTS.ACCESS_TOKEN),
+        refresh_token: text(COLUMN_ALIASES.ACCOUNTS.REFRESH_TOKEN),
+        access_token_expires_at: int(
             COLUMN_ALIASES.ACCOUNTS.ACCESS_TOKEN_EXPIRES_AT,
             {
                 mode: "timestamp_ms",
             }
         ),
-        refreshTokenExpiresAt: int(
+        refresh_token_expires_at: int(
             COLUMN_ALIASES.ACCOUNTS.REFRESH_TOKEN_EXPIRES_AT,
             {
                 mode: "timestamp_ms",
             }
         ),
         scope: text(COLUMN_ALIASES.ACCOUNTS.SCOPE),
-        idToken: text(COLUMN_ALIASES.ACCOUNTS.ID_TOKEN),
+        id_token: text(COLUMN_ALIASES.ACCOUNTS.ID_TOKEN),
         password: text(COLUMN_ALIASES.ACCOUNTS.PASSWORD),
     },
 
@@ -204,7 +204,7 @@ export const accounts = sqliteTable(
         /**
          * indexes
          */
-        index(INDEXES_ENUM.ACCOUNTS_USER_ID).on(table.userId),
+        index(INDEXES_ENUM.ACCOUNTS_USER_ID).on(table.user_id),
     ]
 );
 export const verifications = sqliteTable(
@@ -219,7 +219,7 @@ export const verifications = sqliteTable(
 
         identifier: text(COLUMN_ALIASES.VERIFICATIONS.IDENTIFIER).notNull(),
         value: text(COLUMN_ALIASES.VERIFICATIONS.VALUE).notNull(),
-        expiresAt: int(COLUMN_ALIASES.VERIFICATIONS.EXPIRES_AT, {
+        expires_at: int(COLUMN_ALIASES.VERIFICATIONS.EXPIRES_AT, {
             mode: "timestamp_ms",
         }).notNull(),
     },
@@ -311,7 +311,7 @@ export const mimeTypes = sqliteTable(
         ...COMMON_AUTHORED_COLUMNS,
 
         id: int(COLUMN_ALIASES.COMMON_COLUMNS.ID),
-        mimeType: text("mime_type").notNull().unique(),
+        mime_type: text("mime_type").notNull().unique(),
         title: text("title").notNull(),
         description: text("description"),
     },
@@ -327,7 +327,7 @@ export const mimeTypes = sqliteTable(
         /**
          * indexes
          */
-        index(INDEXES_ENUM.MIME_TYPES_MIME_TYPE).on(table.mimeType),
+        index(INDEXES_ENUM.MIME_TYPES_MIME_TYPE).on(table.mime_type),
     ]
 );
 
@@ -342,7 +342,7 @@ export const medias = sqliteTable(
         /**
          * foreign keys
          */
-        mediaMimeTypeId: int("media_mime_type_id")
+        media_mime_type_id: int("media_mime_type_id")
             .notNull()
             .references(() => mimeTypes.id, {
                 onDelete: "cascade",
@@ -353,15 +353,15 @@ export const medias = sqliteTable(
          */
         name: text("name").notNull(),
         description: text("description"),
-        storageKey: text("storage_key").notNull().unique(),
-        sizeInBytes: int("size_in_bytes").notNull(),
+        storage_key: text("storage_key").notNull().unique(),
+        size_in_bytes: int("size_in_bytes").notNull(),
 
         /**
          * image-kind specific fields
          */
-        imageWidth: int("image_width"),
-        imageHeight: int("image_height"),
-        imageAltText: text("image_alt_text"),
+        image_width: int("image_width"),
+        image_height: int("image_height"),
+        image_alt_text: text("image_alt_text"),
 
         /**
          * playable-kind specific fields
@@ -389,12 +389,12 @@ export const mediaTags = sqliteTable(
         ...COMMON_COLUMNS,
 
         id: int(COLUMN_ALIASES.COMMON_COLUMNS.ID),
-        mediaId: int("media_id")
+        media_id: int("media_id")
             .notNull()
             .references(() => medias.id, {
                 onDelete: "cascade",
             }),
-        tagId: int("tag_id")
+        tag_id: int("tag_id")
             .notNull()
             .references(() => tags.id, {
                 onDelete: "cascade",
@@ -424,14 +424,14 @@ export const userRelations = relations(users, ({ many }) => ({
 
 export const sessionRelations = relations(sessions, ({ one }) => ({
     user: one(users, {
-        fields: [sessions.userId],
+        fields: [sessions.user_id],
         references: [users.id],
     }),
 }));
 
 export const accountRelations = relations(accounts, ({ one }) => ({
     user: one(users, {
-        fields: [accounts.userId],
+        fields: [accounts.user_id],
         references: [users.id],
     }),
 }));
@@ -444,7 +444,7 @@ export const mediaMimeTypeRelations = relations(mimeTypes, ({ many }) => ({
 
 export const mediaRelations = relations(medias, ({ one, many }) => ({
     mediaMimeType: one(mimeTypes, {
-        fields: [medias.mediaMimeTypeId],
+        fields: [medias.media_mime_type_id],
         references: [mimeTypes.id],
     }),
     mediaTags: many(mediaTags),
@@ -458,11 +458,11 @@ export const tagRelations = relations(tags, ({ many }) => ({
 
 export const mediaTagRelations = relations(mediaTags, ({ one }) => ({
     media: one(medias, {
-        fields: [mediaTags.mediaId],
+        fields: [mediaTags.media_id],
         references: [medias.id],
     }),
     tag: one(tags, {
-        fields: [mediaTags.tagId],
+        fields: [mediaTags.tag_id],
         references: [tags.id],
     }),
 }));

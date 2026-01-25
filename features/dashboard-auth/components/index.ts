@@ -1,3 +1,4 @@
+export * from "./atoms/password-strength-meter";
 export * from "./form-schemas";
 export * from "./molecules/auth-header";
 export * from "./molecules/oauth-buttons";

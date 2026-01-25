@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { useWelcomeForm } from "../../hooks/use-welcome-form";
+import { PasswordStrengthMeter } from "../atoms/password-strength-meter";
 import { AuthHeader } from "../molecules/auth-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -86,6 +87,7 @@ export function WelcomeForm({ className, ...props }: WelcomeFormProps) {
                                         {...field}
                                     />
                                 </FormControl>
+                                <PasswordStrengthMeter password={field.value} />
                                 <FormMessage />
                             </FormItem>
                         )}

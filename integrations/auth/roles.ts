@@ -1,7 +1,7 @@
 import { createAccessControl, Role, Statements } from "better-auth/plugins";
 import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
 
-import { ROLE_ENUM } from "@/integrations/auth/constants";
+import { ROLE_ENUM } from "@/configs/constants";
 
 const statements = {
     // default statements from better-auth admin plugin
