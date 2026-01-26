@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
+import { ThemeProvider } from "next-themes";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { ClientProvider } from "@/components/molecules/client-provider";
@@ -18,16 +19,23 @@ type Props = Readonly<{
 
 export default async function Layout({ children }: Props) {
     return (
-        <html>
+        <html lang="en" suppressHydrationWarning>
             <head>{/* Put favicon here */}</head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <NextIntlClientProvider>
-                    <NuqsAdapter>
-                        <ClientProvider>{children}</ClientProvider>
-                    </NuqsAdapter>
-                </NextIntlClientProvider>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <NextIntlClientProvider>
+                        <NuqsAdapter>
+                            <ClientProvider>{children}</ClientProvider>
+                        </NuqsAdapter>
+                    </NextIntlClientProvider>
+                </ThemeProvider>
             </body>
         </html>
     );
